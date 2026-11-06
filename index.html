@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light">
-    <title>شطرنج تيليجرام</title>
+    <title>شطرنج تيليجرام الاحترافية</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,9 +15,9 @@
     
     <style>
         :root { 
-            --primary-blue: #3b82f6; 
-            --dark-blue: #2563eb; 
-            --bg-dark: #201e1b;
+            --primary-color: #2563eb; 
+            --dark-color: #1d4ed8; 
+            --bg-dark: #1a1a1d;
         }
         
         body { 
@@ -32,39 +32,39 @@
         
         #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; position: relative; overflow: hidden; }
         
-        .bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #2e2a25 0%, #1e1c19 100%); }
-        .floating-piece { position: absolute; color: rgba(255, 255, 255, 0.04); font-size: 100px; animation: floatUp 15s linear infinite; }
+        .bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #26262a 0%, #151518 100%); }
+        .floating-piece { position: absolute; color: rgba(255, 255, 255, 0.03); font-size: 100px; animation: floatUp 15s linear infinite; }
         .p1 { left: 10%; animation-duration: 18s; animation-delay: 0s; }
         .p2 { left: 50%; font-size: 140px; animation-duration: 22s; animation-delay: 5s; }
         .p3 { left: 80%; animation-duration: 16s; animation-delay: 2s; }
         @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
 
         .setup-box {
-            background: rgba(38, 36, 33, 0.85); backdrop-filter: blur(10px); 
+            background: rgba(30, 30, 35, 0.85); backdrop-filter: blur(10px); 
             padding: 40px 30px; border-radius: 20px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.8); width: 85%; max-width: 350px;
-            border: 1px solid rgba(59, 130, 246, 0.3);
+            border: 1px solid rgba(37, 99, 235, 0.3);
         }
-        .logo-icon { font-size: 65px; margin-bottom: 0px; color: var(--primary-blue); text-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+        .logo-icon { font-size: 65px; margin-bottom: 0px; color: var(--primary-color); text-shadow: 0 0 20px rgba(37, 99, 235, 0.6); }
         .logo-text { font-size: 34px; font-weight: 900; margin-bottom: 25px; color: #fff; letter-spacing: 1px;}
         
         select { 
-            background: rgba(0,0,0,0.3); color: #fff; border: 2px solid #444; 
+            background: rgba(0,0,0,0.4); color: #fff; border: 2px solid #444; 
             padding: 12px 15px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
             border-radius: 12px; margin: 15px 0 25px; width: 100%; outline: none; cursor: pointer;
             transition: 0.3s;
         }
-        select:focus { border-color: var(--primary-blue); }
+        select:focus { border-color: var(--primary-color); }
         
         .main-btn { 
-            background: var(--primary-blue); color: white; 
+            background: var(--primary-color); color: white; 
             border: none; padding: 15px 30px; font-size: 20px; font-weight: 900; font-family: 'Cairo', sans-serif;
             border-radius: 12px; cursor: pointer; 
-            box-shadow: 0 6px 0 var(--dark-blue), 0 10px 20px rgba(59, 130, 246, 0.4); 
+            box-shadow: 0 6px 0 var(--dark-color), 0 10px 20px rgba(37, 99, 235, 0.4); 
             width: 100%; transition: 0.1s; letter-spacing: 0.5px;
             animation: pulseBtn 2s infinite;
         }
-        .main-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--dark-blue); animation: none; }
+        .main-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--dark-color); animation: none; }
         @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         
         #game-screen { display: none; }
@@ -104,7 +104,6 @@
         .yellow-highlight { background-color: rgba(255, 255, 51, 0.5) !important; }
         .red-highlight { background-color: rgba(235, 97, 80, 0.9) !important; transition: background-color 0.2s; }
         
-        /* التقييمات الذكية */
         .eval-brilliant-bg { background-color: rgba(27, 172, 166, 0.6) !important; box-shadow: inset 0 0 20px rgba(255,255,255,0.6); }
         .eval-great-bg { background-color: rgba(92, 139, 176, 0.7) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.3); }
         .eval-blunder-bg { background-color: rgba(250, 65, 45, 0.7) !important; animation: shake 0.3s; }
@@ -127,14 +126,14 @@
         .surrender-flag { position: absolute; top: -15px; right: -5px; font-size: 28px; z-index: 100; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.8)); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
         #game-over-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
-        .modal-content { background: #262421; padding: 35px 25px; border-radius: 20px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9); width: 85%; max-width: 350px; animation: popIn 0.3s ease-out forwards; border-top: 6px solid var(--primary-blue); }
+        .modal-content { background: #262421; padding: 35px 25px; border-radius: 20px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9); width: 85%; max-width: 350px; animation: popIn 0.3s ease-out forwards; border-top: 6px solid var(--primary-color); }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .modal-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; font-family: 'Cairo', sans-serif;}
         .modal-text { font-size: 16px; font-weight: 700; margin-bottom: 30px; color: #bababa; }
         
         .modal-buttons { display: flex; gap: 10px; justify-content: center; width: 100%; }
         .modal-btn { flex: 1; padding: 12px 10px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif; border-radius: 10px; cursor: pointer; border: none; transition: 0.1s; }
-        .btn-play-again { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--dark-blue); }
+        .btn-play-again { background: var(--primary-color); color: white; box-shadow: 0 6px 0 var(--dark-color); }
         .btn-play-again:active { transform: translateY(6px); box-shadow: none; }
         .btn-exit { background: #3d3b39; color: white; box-shadow: 0 6px 0 #1e1c19; }
         .btn-exit:active { transform: translateY(6px); box-shadow: none; }
@@ -192,7 +191,7 @@
             <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none; animation: none;">أرسل دعوة لأصدقائك</button>
             <button class="main-btn btn-resign" id="resign-btn" onclick="resignGame()" style="display:none;">انسحاب 🏳️</button>
         </div>
-        <div id="game-status" style="margin-top: 15px; color: var(--primary-blue); font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
+        <div id="game-status" style="margin-top: 15px; color: var(--primary-color); font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
     </div>
 
     <div id="game-over-modal">
@@ -232,7 +231,6 @@
         const defaultPhoto = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
         const userPhoto = tg.initDataUnsafe?.user?.photo_url || defaultPhoto;
 
-        // مكتبة الأصوات
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
         const captureSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3');
         const checkSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-check.mp3');
@@ -244,7 +242,6 @@
 
         let board = null;
         let game = new Chess();
-        
         let roomId = null;
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has('room')) roomId = urlParams.get('room');
@@ -254,7 +251,6 @@
         let myRole = 'w'; let gameRef = null; let timerInterval = null; let opponentJoined = false;
         let localWTime = 0; let localBTime = 0; let timeLimitGame = 0; let dataCache = {};
         let selectedTapSquare = null;
-
         const pieceOrder = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }; 
 
         if (roomId) {
@@ -376,7 +372,6 @@
 
             let $targetSquare = $('#board .square-' + target);
 
-            // --- المهاجم يسمع صوت حركته فقط، ولا يسمع الكش ---
             if (moveEvalType === 'brilliant') {
                 brilliantSound.play().catch(e=>{});
                 $targetSquare.addClass('eval-brilliant-bg').append('<div class="evaluation-icon icon-brilliant">!!</div>');
@@ -404,8 +399,7 @@
             });
             return true;
         }
-
-        function checkGameStatus() {
+                    function checkGameStatus() {
             if (game.game_over()) {
                 clearInterval(timerInterval);
                 if (game.in_checkmate()) {
@@ -549,9 +543,8 @@
                         removeHighlights();
                         
                         let isCheck = game.in_check();
-                        let isMyTurnNow = (game.turn() === myRole); // الخصم (أو أنت إذا استقبلت النقلة)
+                        let isMyTurnNow = (game.turn() === myRole); 
 
-                        // --- المدافع يسمع صوت الكش فقط إذا حدث كش، أو يسمع الأصوات الأخرى ---
                         if (isMyTurnNow) {
                             if (isCheck) {
                                 checkSound.play().catch(e=>{});
@@ -564,7 +557,6 @@
                             }
                         }
                         
-                        // التأثيرات البصرية تظهر لكلا اللاعبين
                         if (data.lastMoveTo && data.lastMoveType && data.lastMoveType !== 'normal') {
                             let $lastSquare = $('#board .square-' + data.lastMoveTo);
                             if (data.lastMoveType === 'brilliant') {
@@ -588,7 +580,7 @@
                     updateTimersUI(localWTime, localBTime);
                     
                     if (data.wName && data.bName) {
-                                                let oppName = myRole === 'w' ? data.bName : data.wName;
+                        let oppName = myRole === 'w' ? data.bName : data.wName;
                         let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
                         $('#opponent-name').text(oppName).css("color", myRole === 'w' ? "#bababa" : "#111");
                         if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
