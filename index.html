@@ -6,7 +6,6 @@
     <meta name="color-scheme" content="light">
     <title>شطرنج تيليجرام</title>
     
-    <!-- استيراد خط Cairo الفخم من جوجل -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
@@ -17,8 +16,8 @@
     <style>
         :root { color-scheme: light; }
         body { 
-            font-family: 'Cairo', sans-serif; /* تطبيق الخط الجديد */
-            background: #312e2b; /* لون خلفية Chess.com */
+            font-family: 'Cairo', sans-serif; 
+            background: #312e2b; 
             color: #fff; 
             text-align: center; margin: 0; padding: 10px; 
             overflow: hidden; 
@@ -26,15 +25,10 @@
             -webkit-user-select: none;
         }
         
-        /* تصميم شاشة البداية الفخمة */
         #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; }
         .setup-box {
-            background: #262421;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            width: 85%;
-            max-width: 350px;
+            background: #262421; padding: 40px 30px; border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); width: 85%; max-width: 350px;
         }
         .logo-icon { font-size: 60px; margin-bottom: 5px; color: #81b64c; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
         .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 25px; color: #fff; }
@@ -42,23 +36,25 @@
         select { 
             background: #1e1c19; color: #fff; border: 2px solid #3d3b39; 
             padding: 12px 15px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
-            border-radius: 10px; margin: 15px 0 25px; width: 100%; outline: none;
-            cursor: pointer;
+            border-radius: 10px; margin: 15px 0 25px; width: 100%; outline: none; cursor: pointer;
         }
         
-        /* أزرار اللعبة بستايل Chess.com */
         .main-btn { 
             background: #81b64c; color: white; 
             border: none; padding: 15px 30px; font-size: 20px; font-weight: 900; font-family: 'Cairo', sans-serif;
             border-radius: 10px; cursor: pointer; 
-            box-shadow: 0 6px 0 #537a31; /* تأثير 3D للزر */
-            width: 100%; transition: 0.1s;
-            letter-spacing: 0.5px;
+            box-shadow: 0 6px 0 #537a31; width: 100%; transition: 0.1s; letter-spacing: 0.5px;
         }
         .main-btn:active { transform: translateY(6px); box-shadow: none; }
         
         #game-screen { display: none; }
-        #board { width: 100%; max-width: 400px; margin: 15px auto; border-radius: 5px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+        
+        #board { 
+            width: 100%; max-width: 400px; margin: 15px auto; border-radius: 5px; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+            touch-action: none; 
+            -webkit-touch-callout: none;
+        }
         
         .player-info { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -66,14 +62,23 @@
             max-width: 370px; margin: 5px auto; font-weight: 700; font-size: 16px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        
+        /* تنسيق صورة اللاعب والاسم */
+        .player-details {
+            display: flex; align-items: center; gap: 10px;
+        }
+        .avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            object-fit: cover; border: 2px solid #3d3b39;
+            background-color: #1e1c19;
+        }
+        
         .timer { 
             background: #1a1917; padding: 6px 15px; border-radius: 6px; 
-            color: #fff; font-size: 20px; font-weight: 900; 
-            letter-spacing: 1px;
+            color: #fff; font-size: 20px; font-weight: 900; letter-spacing: 1px;
         }
         #invite-btn { margin-top: 20px; }
 
-        /* تأثيرات الرقعة الاحترافية */
         .yellow-highlight { background-color: rgba(255, 255, 51, 0.5) !important; }
         .red-highlight { background-color: rgba(235, 97, 80, 0.9) !important; }
         
@@ -89,7 +94,6 @@
             top: 0; left: 0; pointer-events: none;
         }
 
-        /* نافذة نهاية اللعب بستايل Chess.com */
         #game-over-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 1000;
@@ -97,8 +101,7 @@
         .modal-content {
             background: #262421; padding: 35px 25px; border-radius: 16px; text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.7); width: 85%; max-width: 320px;
-            animation: popIn 0.3s ease-out forwards;
-            border-top: 6px solid #81b64c;
+            animation: popIn 0.3s ease-out forwards; border-top: 6px solid #81b64c;
         }
         @keyframes popIn {
             0% { transform: scale(0.8); opacity: 0; }
@@ -128,19 +131,27 @@
 
     <div id="game-screen">
         <div class="player-info">
-            <span id="opponent-name" style="color: #bababa;">الخصم (ينتظر...)</span>
+            <div class="player-details">
+                <img id="opponent-photo" class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+                <span id="opponent-name" style="color: #bababa;">الخصم (ينتظر...)</span>
+            </div>
             <div class="timer" id="black-timer">--:--</div>
         </div>
+        
         <div id="board"></div>
+        
         <div class="player-info">
-            <span id="my-name">أنت</span>
+            <div class="player-details">
+                <img id="my-photo" class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+                <span id="my-name">أنت</span>
+            </div>
             <div class="timer" id="white-timer">--:--</div>
         </div>
+        
         <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none; max-width: 370px;">أرسل دعوة لأصدقائك</button>
         <div id="game-status" style="margin-top: 15px; color: #81b64c; font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
     </div>
 
-    <!-- لائحة النهاية بستايل Chess.com -->
     <div id="game-over-modal">
         <div class="modal-content">
             <div class="modal-title" id="modal-result-title">فاز الأبيض</div>
@@ -172,7 +183,11 @@
 
         const tg = window.Telegram.WebApp;
         tg.expand(); 
+        
+        // جلب بيانات اللاعب من التيليجرام (الاسم والصورة)
         const userName = tg.initDataUnsafe?.user?.first_name || "لاعب تيليجرام";
+        const defaultPhoto = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
+        const userPhoto = tg.initDataUnsafe?.user?.photo_url || defaultPhoto;
 
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
         const captureSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3');
@@ -190,6 +205,10 @@
         let gameRef = null;
         let timerInterval = null;
         let opponentJoined = false;
+        
+        let localWTime = 0;
+        let localBTime = 0;
+        let timeLimitGame = 0;
         let dataCache = {};
 
         if (roomId) {
@@ -238,6 +257,7 @@
 
         function checkGameStatus() {
             if (game.game_over()) {
+                clearInterval(timerInterval);
                 if (game.in_checkmate()) {
                     let winner = game.turn() === 'w' ? 'فاز الأسود' : 'فاز الأبيض';
                     showGameOver(winner, "بواسطة كش مات");
@@ -249,9 +269,33 @@
             return false;
         }
 
+        function startLocalClock() {
+            clearInterval(timerInterval);
+            if (timeLimitGame <= 0) return; 
+
+            timerInterval = setInterval(() => {
+                if (!opponentJoined || game.game_over()) return;
+
+                if (game.turn() === 'w') {
+                    if (localWTime > 0) localWTime--;
+                } else {
+                    if (localBTime > 0) localBTime--;
+                }
+                
+                updateTimersUI(localWTime, localBTime);
+                
+                if (localWTime <= 0 || localBTime <= 0) {
+                    clearInterval(timerInterval);
+                    let winnerText = localWTime <= 0 ? 'فاز الأسود' : 'فاز الأبيض';
+                    showGameOver(winnerText, "بسبب نفاد الوقت ⏱️");
+                }
+            }, 1000);
+        }
+
         function initGame(id, minutes = 0, creatorName = "") {
             gameRef = ref(db, 'rooms/' + id);
             document.getElementById('my-name').innerText = userName;
+            document.getElementById('my-photo').src = userPhoto; // وضع صورتي
             
             if (myRole === 'w') {
                 let seconds = minutes * 60;
@@ -261,19 +305,21 @@
                     wTime: seconds,
                     bTime: seconds,
                     wName: creatorName,
-                    turn: 'w',
-                    lastMoveTime: Date.now()
+                    wPhoto: userPhoto, // حفظ صورة الأبيض
+                    turn: 'w'
                 });
             } else {
                 set(ref(db, 'rooms/' + id + '/bName'), userName);
+                set(ref(db, 'rooms/' + id + '/bPhoto'), userPhoto); // حفظ صورة الأسود
             }
 
             var config = {
                 position: 'start',
                 draggable: true,
-                moveSpeed: 'fast',
-                snapbackSpeed: 'fast',
-                snapSpeed: 'fast',
+                dropOffBoard: 'snapback', 
+                moveSpeed: 150,           
+                snapbackSpeed: 100,       
+                snapSpeed: 100,
                 pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
@@ -293,7 +339,7 @@
                 onDrop: function(source, target) {
                     removeHighlights();
                     var move = game.move({ from: source, to: target, promotion: 'q' });
-                    if (move === null) return 'snapback';
+                    if (move === null) return 'snapback'; 
                     
                     if (move.captured) captureSound.play();
                     else moveSound.play();
@@ -301,20 +347,12 @@
                     highlightKingInCheck();
                     checkGameStatus();
 
-                    let now = Date.now();
-                    let elapsed = (now - dataCache.lastMoveTime) / 1000;
-                    let currentW = dataCache.wTime;
-                    let currentB = dataCache.bTime;
-
-                    if (myRole === 'w') currentW = Math.max(0, currentW - elapsed);
-                    else currentB = Math.max(0, currentB - elapsed);
-
                     set(gameRef, { 
                         fen: game.fen(), turn: game.turn(),
-                        wTime: currentW, bTime: currentB,
+                        wTime: localWTime, bTime: localBTime,
                         wName: dataCache.wName || '', bName: dataCache.bName || '',
-                        timeLimit: dataCache.timeLimit || 0,
-                        lastMoveTime: now
+                        wPhoto: dataCache.wPhoto || '', bPhoto: dataCache.bPhoto || '',
+                        timeLimit: timeLimitGame
                     });
                 }
             };
@@ -323,9 +361,9 @@
             onValue(gameRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    if (!dataCache.lastMoveTime) dataCache = data; 
-                    else dataCache = {...dataCache, ...data};
-
+                    dataCache = data;
+                    timeLimitGame = data.timeLimit;
+                    
                     if (data.fen !== game.fen()) {
                         game.load(data.fen);
                         board.position(data.fen);
@@ -333,47 +371,40 @@
                         removeHighlights();
                         highlightKingInCheck();
                         checkGameStatus();
+                        
+                        localWTime = data.wTime;
+                        localBTime = data.bTime;
+                    } else if (localWTime === 0 && localBTime === 0 && data.timeLimit > 0) {
+                        localWTime = data.wTime;
+                        localBTime = data.bTime;
                     }
                     
-                    if (data.wName && data.bName) {
+                    updateTimersUI(localWTime, localBTime);
+                    
+                    if (data.wName && data.bName && !opponentJoined) {
                         opponentJoined = true;
                         $('#game-status').text('بدأت المعركة!');
                         $('#invite-btn').hide();
+                        
                         let oppName = myRole === 'w' ? data.bName : data.wName;
+                        let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
+                        
                         $('#opponent-name').text(oppName).css("color", "#fff");
-                    }
-
-                    if (data.timeLimit > 0) {
-                        clearInterval(timerInterval);
-                        if (!game.game_over() && opponentJoined) {
-                            timerInterval = setInterval(() => {
-                                let now = Date.now();
-                                let elapsed = (now - dataCache.lastMoveTime) / 1000;
-                                let dispW = dataCache.wTime;
-                                let dispB = dataCache.bTime;
-
-                                if (dataCache.turn === 'w') dispW = Math.max(0, dispW - elapsed);
-                                else dispB = Math.max(0, dispB - elapsed);
-
-                                updateTimersUI(dispW, dispB);
-                                
-                                if (dispW <= 0 || dispB <= 0) {
-                                    clearInterval(timerInterval);
-                                    let winnerText = dispW <= 0 ? 'فاز الأسود' : 'فاز الأبيض';
-                                    showGameOver(winnerText, "بسبب نفاد الوقت");
-                                }
-                            }, 200);
-                        } else {
-                            updateTimersUI(data.wTime, data.bTime);
-                        }
+                        if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
+                        
+                        startLocalClock(); 
                     }
                 }
             });
         }
 
         function updateTimersUI(wTime, bTime) {
+            if (timeLimitGame <= 0) {
+                $('#white-timer').text('--:--');
+                $('#black-timer').text('--:--');
+                return;
+            }
             function format(sec) {
-                sec = Math.floor(sec);
                 if (sec < 0) sec = 0;
                 let m = Math.floor(sec / 60), s = sec % 60;
                 return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
