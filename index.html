@@ -14,10 +14,15 @@
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     
     <style>
-        :root { color-scheme: light; }
+        :root { 
+            --primary-blue: #3b82f6; 
+            --dark-blue: #2563eb; 
+            --bg-dark: #201e1b;
+        }
+        
         body { 
             font-family: 'Cairo', sans-serif; 
-            background: #2a2825; 
+            background: var(--bg-dark); 
             color: #fff; 
             text-align: center; margin: 0; padding: 10px; 
             overflow: hidden; 
@@ -25,54 +30,62 @@
             -webkit-user-select: none;
         }
         
-        #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; }
+        #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; position: relative; overflow: hidden; }
+        
+        .bg-animation { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #2e2a25 0%, #1e1c19 100%); }
+        .floating-piece { position: absolute; color: rgba(255, 255, 255, 0.04); font-size: 100px; animation: floatUp 15s linear infinite; }
+        .p1 { left: 10%; animation-duration: 18s; animation-delay: 0s; }
+        .p2 { left: 50%; font-size: 140px; animation-duration: 22s; animation-delay: 5s; }
+        .p3 { left: 80%; animation-duration: 16s; animation-delay: 2s; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
+
         .setup-box {
-            background: #1e1c19; padding: 40px 30px; border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 85%; max-width: 350px;
+            background: rgba(38, 36, 33, 0.85); backdrop-filter: blur(10px); 
+            padding: 40px 30px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); width: 85%; max-width: 350px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
-        .logo-icon { font-size: 60px; margin-bottom: 5px; color: #81b64c; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 25px; color: #fff; }
+        .logo-icon { font-size: 65px; margin-bottom: 0px; color: var(--primary-blue); text-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
+        .logo-text { font-size: 34px; font-weight: 900; margin-bottom: 25px; color: #fff; letter-spacing: 1px;}
         
         select { 
-            background: #2a2825; color: #fff; border: 2px solid #3d3b39; 
+            background: rgba(0,0,0,0.3); color: #fff; border: 2px solid #444; 
             padding: 12px 15px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
-            border-radius: 10px; margin: 15px 0 25px; width: 100%; outline: none; cursor: pointer;
+            border-radius: 12px; margin: 15px 0 25px; width: 100%; outline: none; cursor: pointer;
+            transition: 0.3s;
         }
+        select:focus { border-color: var(--primary-blue); }
         
         .main-btn { 
-            background: #81b64c; color: white; 
+            background: var(--primary-blue); color: white; 
             border: none; padding: 15px 30px; font-size: 20px; font-weight: 900; font-family: 'Cairo', sans-serif;
-            border-radius: 10px; cursor: pointer; 
-            box-shadow: 0 6px 0 #537a31; width: 100%; transition: 0.1s; letter-spacing: 0.5px;
+            border-radius: 12px; cursor: pointer; 
+            box-shadow: 0 6px 0 var(--dark-blue), 0 10px 20px rgba(59, 130, 246, 0.4); 
+            width: 100%; transition: 0.1s; letter-spacing: 0.5px;
+            animation: pulseBtn 2s infinite;
         }
-        .main-btn:active { transform: translateY(6px); box-shadow: none; }
+        .main-btn:active { transform: translateY(6px); box-shadow: 0 0 0 var(--dark-blue); animation: none; }
+        @keyframes pulseBtn { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         
         #game-screen { display: none; }
         
         #board { 
-            width: 100%; max-width: 400px; margin: 10px auto; border-radius: 5px; 
-            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-            touch-action: none; 
-            -webkit-touch-callout: none;
-            position: relative; /* لجعل الأيقونات تتوضع بشكل صحيح */
+            width: 100%; max-width: 400px; margin: 10px auto; border-radius: 8px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            touch-action: none; -webkit-touch-callout: none; position: relative;
         }
         
         .player-info { 
             display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; 
             padding: 12px 15px; border-radius: 12px; 
             max-width: 380px; margin: 5px auto; font-weight: 700; font-size: 16px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3); transition: all 0.3s ease;
         }
         
         .player-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        /* حاوية القطع المأكولة */
-        .captured-pieces { 
-            display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-start; 
-            margin-top: 5px; min-height: 20px; padding-left: 48px; 
-        }
-        .captured-pieces img { width: 18px; height: 18px; opacity: 0.8; }
+        .captured-pieces { display: flex; flex-wrap: wrap; gap: 2px; justify-content: flex-start; margin-top: 5px; min-height: 20px; padding-left: 48px; }
+        .captured-pieces img { width: 18px; height: 18px; opacity: 0.9; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); }
         
         .player-white { background: #3d3b39; color: #fff; border-left: 5px solid #fff; }
         .player-white .timer { background: #111; color: #fff; }
@@ -81,95 +94,64 @@
         .player-black .timer { background: #1a1917; color: #fff; }
         
         .player-details { display: flex; align-items: center; gap: 10px; }
-        .avatar {
-            width: 42px; height: 42px; border-radius: 50%;
-            object-fit: cover; border: 2px solid #555;
-            background-color: #1e1c19;
-        }
+        .avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #555; background-color: #1e1c19; }
         
         .timer { padding: 5px 12px; border-radius: 6px; font-size: 20px; font-weight: 900; letter-spacing: 1px; }
         
-        .action-buttons {
-            display: flex; justify-content: center; gap: 10px; margin-top: 15px; max-width: 380px; margin-left: auto; margin-right: auto;
-        }
-        .btn-resign { background: #d64d4d; box-shadow: 0 5px 0 #9c3535; font-size: 18px; padding: 12px 20px; }
+        .action-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 15px; max-width: 380px; margin-left: auto; margin-right: auto; }
+        .btn-resign { background: #d64d4d; box-shadow: 0 6px 0 #9c3535; font-size: 18px; padding: 12px 20px; animation: none;}
 
         .yellow-highlight { background-color: rgba(255, 255, 51, 0.5) !important; }
         .red-highlight { background-color: rgba(235, 97, 80, 0.9) !important; transition: background-color 0.2s; }
-        .error-flash { background-color: rgba(255, 0, 0, 0.7) !important; }
         
-        /* تأثير النقلة القوية (أزرق/أخضر فاتح) */
-        .brilliant-highlight { 
-            background-color: rgba(43, 178, 178, 0.6) !important; 
-            box-shadow: inset 0 0 15px rgba(255,255,255,0.5); 
-        }
-        
-        /* أيقونة التقييم (علامة التعجب) */
+        /* التقييمات الذكية */
+        .eval-brilliant-bg { background-color: rgba(27, 172, 166, 0.6) !important; box-shadow: inset 0 0 20px rgba(255,255,255,0.6); }
+        .eval-great-bg { background-color: rgba(92, 139, 176, 0.7) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.3); }
+        .eval-blunder-bg { background-color: rgba(250, 65, 45, 0.7) !important; animation: shake 0.3s; }
+        .error-flash { background-color: rgba(255, 0, 0, 0.6) !important; }
+
+        @keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-4px); } 50% { transform: translateX(4px); } 75% { transform: translateX(-4px); } 100% { transform: translateX(0); } }
+
         .evaluation-icon {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            width: 20px;
-            height: 20px;
-            background-color: #4CAF50; /* أخضر */
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 100;
-            border: 2px solid white;
+            position: absolute; top: -6px; right: -6px; width: 24px; height: 24px;
+            color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 900; z-index: 100; border: 2px solid white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.5); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        .icon-brilliant { background-color: #1baca6; } 
+        .icon-great { background-color: #5c8bb0; } 
+        .icon-blunder { background-color: #fa412d; } 
         
-        /* الدائرة الحمراء لقطع الخصم */
-        .highlight-dot {
-            width: 30%; height: 30%; background: rgba(0, 0, 0, 0.25);
-            border-radius: 50%; position: absolute;
-            top: 35%; left: 35%; pointer-events: none;
-        }
-        .highlight-capture {
-            width: 100%; height: 100%; box-sizing: border-box;
-            box-shadow: inset 0 0 0 6px rgba(255, 51, 51, 0.75); /* إطار أحمر */
-            border-radius: 50%; position: absolute;
-            top: 0; left: 0; pointer-events: none;
-        }
+        .highlight-dot { width: 30%; height: 30%; background: rgba(0, 0, 0, 0.25); border-radius: 50%; position: absolute; top: 35%; left: 35%; pointer-events: none; }
+        .highlight-capture { width: 100%; height: 100%; box-sizing: border-box; box-shadow: inset 0 0 0 6px rgba(250, 65, 45, 0.8); border-radius: 50%; position: absolute; top: 0; left: 0; pointer-events: none; }
+        .surrender-flag { position: absolute; top: -15px; right: -5px; font-size: 28px; z-index: 100; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.8)); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        .surrender-flag {
-            position: absolute; top: -15px; right: -5px; font-size: 28px; z-index: 100;
-            filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.8));
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        #game-over-modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 1000;
-        }
-        .modal-content {
-            background: #262421; padding: 35px 25px; border-radius: 16px; text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.7); width: 85%; max-width: 350px;
-            animation: popIn 0.3s ease-out forwards; border-top: 6px solid #81b64c;
-        }
+        #game-over-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .modal-content { background: #262421; padding: 35px 25px; border-radius: 20px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9); width: 85%; max-width: 350px; animation: popIn 0.3s ease-out forwards; border-top: 6px solid var(--primary-blue); }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        .modal-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 8px; font-family: 'Cairo', sans-serif;}
+        .modal-title { font-size: 28px; font-weight: 900; color: #fff; margin-bottom: 8px; font-family: 'Cairo', sans-serif;}
         .modal-text { font-size: 16px; font-weight: 700; margin-bottom: 30px; color: #bababa; }
         
         .modal-buttons { display: flex; gap: 10px; justify-content: center; width: 100%; }
-        .modal-btn { flex: 1; padding: 12px 10px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif; border-radius: 8px; cursor: pointer; border: none; transition: 0.1s; }
-        .btn-play-again { background: #81b64c; color: white; box-shadow: 0 5px 0 #537a31; }
-        .btn-play-again:active { transform: translateY(5px); box-shadow: none; }
-        .btn-exit { background: #3d3b39; color: white; box-shadow: 0 5px 0 #1e1c19; }
-        .btn-exit:active { transform: translateY(5px); box-shadow: none; }
+        .modal-btn { flex: 1; padding: 12px 10px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif; border-radius: 10px; cursor: pointer; border: none; transition: 0.1s; }
+        .btn-play-again { background: var(--primary-blue); color: white; box-shadow: 0 6px 0 var(--dark-blue); }
+        .btn-play-again:active { transform: translateY(6px); box-shadow: none; }
+        .btn-exit { background: #3d3b39; color: white; box-shadow: 0 6px 0 #1e1c19; }
+        .btn-exit:active { transform: translateY(6px); box-shadow: none; }
     </style>
 </head>
 <body>
 
     <div id="setup-screen">
+        <div class="bg-animation">
+            <div class="floating-piece p1">♞</div>
+            <div class="floating-piece p2">♛</div>
+            <div class="floating-piece p3">♜</div>
+        </div>
         <div class="setup-box">
             <div class="logo-icon">♟️</div>
             <div class="logo-text">شطرنج</div>
-            <p style="color: #999; font-size: 15px; font-weight: 700; margin-bottom: 10px;">اختر وقت المباراة</p>
+            <p style="color: #aaa; font-size: 15px; font-weight: 700; margin-bottom: 15px;">العب بأسلوب عالمي</p>
             <select id="time-limit">
                 <option value="0">بدون وقت (مفتوح)</option>
                 <option value="1">1 دقيقة (رصاصة)</option>
@@ -190,7 +172,6 @@
                 </div>
                 <div class="timer" id="opponent-timer">--:--</div>
             </div>
-            <!-- مكان القطع المأكولة للخصم -->
             <div class="captured-pieces" id="opponent-captured"></div>
         </div>
         
@@ -204,15 +185,14 @@
                 </div>
                 <div class="timer" id="my-timer">--:--</div>
             </div>
-            <!-- مكان القطع المأكولة لك -->
             <div class="captured-pieces" id="my-captured"></div>
         </div>
         
         <div class="action-buttons">
-            <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none;">أرسل دعوة لأصدقائك</button>
+            <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none; animation: none;">أرسل دعوة لأصدقائك</button>
             <button class="main-btn btn-resign" id="resign-btn" onclick="resignGame()" style="display:none;">انسحاب 🏳️</button>
         </div>
-        <div id="game-status" style="margin-top: 15px; color: #81b64c; font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
+        <div id="game-status" style="margin-top: 15px; color: var(--primary-blue); font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
     </div>
 
     <div id="game-over-modal">
@@ -245,7 +225,6 @@
         
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         
@@ -253,9 +232,15 @@
         const defaultPhoto = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
         const userPhoto = tg.initDataUnsafe?.user?.photo_url || defaultPhoto;
 
+        // مكتبة الأصوات
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
         const captureSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3');
         const checkSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-check.mp3');
+        const errorSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/illegal.mp3'); 
+        const brilliantSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/promote.mp3'); 
+        const greatSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/notify.mp3'); 
+        const gameStartSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/game-start.mp3');
+        const gameEndSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/game-end.mp3');
 
         let board = null;
         let game = new Chess();
@@ -266,20 +251,11 @@
         else if (urlParams.has('startapp')) roomId = urlParams.get('startapp');
         else if (tg.initDataUnsafe?.start_param) roomId = tg.initDataUnsafe.start_param;
 
-        let myRole = 'w';
-        let gameRef = null;
-        let timerInterval = null;
-        let opponentJoined = false;
-        
-        let localWTime = 0;
-        let localBTime = 0;
-        let timeLimitGame = 0;
-        let dataCache = {};
-        
+        let myRole = 'w'; let gameRef = null; let timerInterval = null; let opponentJoined = false;
+        let localWTime = 0; let localBTime = 0; let timeLimitGame = 0; let dataCache = {};
         let selectedTapSquare = null;
 
-        // مصفوفة لحفظ القطع المأكولة (ترتيب: p, n, b, r, q)
-        const pieceOrder = { p: 1, n: 2, b: 3, r: 4, q: 5 };
+        const pieceOrder = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }; 
 
         if (roomId) {
             myRole = 'b';
@@ -291,13 +267,10 @@
         window.startGame = function() {
             let selectedMinutes = parseInt(document.getElementById('time-limit').value);
             roomId = Math.random().toString(36).substring(2, 10);
-            myRole = 'w';
-            opponentJoined = false;
-            
+            myRole = 'w'; opponentJoined = false;
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
             document.getElementById('invite-btn').style.display = 'inline-block';
-            
             initGame(roomId, selectedMinutes, userName);
         }
 
@@ -317,7 +290,7 @@
         }
 
         function removeHighlights() {
-            $('#board .square-55d63').removeClass('yellow-highlight red-highlight brilliant-highlight error-flash');
+            $('#board .square-55d63').removeClass('yellow-highlight red-highlight eval-brilliant-bg eval-great-bg eval-blunder-bg error-flash');
             $('#board .square-55d63').find('.highlight-dot, .highlight-capture, .evaluation-icon').remove();
         }
 
@@ -327,46 +300,42 @@
                 $('#board .square-55d63').each(function() {
                     let sq = $(this).attr('data-square');
                     let piece = game.get(sq);
-                    if (piece && piece.type === 'k' && piece.color === turn) {
-                        $(this).addClass('red-highlight');
-                    }
+                    if (piece && piece.type === 'k' && piece.color === turn) $(this).addClass('red-highlight');
                 });
             }
         }
 
+        function triggerErrorEffect(square) {
+            errorSound.play().catch(e => {}); 
+            let $sq = $('#board .square-' + square);
+            $sq.addClass('error-flash');
+            setTimeout(() => $sq.removeClass('error-flash'), 300);
+        }
+
         function showGameOver(title, message) {
+            gameEndSound.play().catch(e=>{});
             document.getElementById('modal-result-title').innerText = title;
             document.getElementById('modal-result-text').innerText = message;
             document.getElementById('game-over-modal').style.display = 'flex';
         }
 
-        // حساب وعرض القطع المأكولة
         function updateCapturedPieces() {
             let history = game.history({ verbose: true });
-            let wCaptured = [];
-            let bCaptured = [];
-            
+            let wCaptured = []; let bCaptured = [];
             history.forEach(move => {
                 if (move.captured) {
-                    if (move.color === 'w') wCaptured.push(move.captured); // الأبيض أكل قطعة سوداء
-                    else bCaptured.push(move.captured); // الأسود أكل قطعة بيضاء
+                    if (move.color === 'w') wCaptured.push(move.captured);
+                    else bCaptured.push(move.captured);
                 }
             });
-            
             wCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             bCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             
-            // استخدام صور القطع من Chessboard.js
             let wHtml = wCaptured.map(p => `<img src="https://chessboardjs.com/img/chesspieces/wikipedia/b${p}.png">`).join('');
             let bHtml = bCaptured.map(p => `<img src="https://chessboardjs.com/img/chesspieces/wikipedia/w${p}.png">`).join('');
             
-            if (myRole === 'w') {
-                $('#my-captured').html(wHtml);
-                $('#opponent-captured').html(bHtml);
-            } else {
-                $('#my-captured').html(bHtml);
-                $('#opponent-captured').html(wHtml);
-            }
+            if (myRole === 'w') { $('#my-captured').html(wHtml); $('#opponent-captured').html(bHtml); } 
+            else { $('#my-captured').html(bHtml); $('#opponent-captured').html(wHtml); }
         }
 
         function executeMove(source, target) {
@@ -374,23 +343,52 @@
             if (move === null) return false; 
             
             board.position(game.fen(), false);
-            
-            removeHighlights(); // إزالة التحديدات السابقة
+            removeHighlights(); 
 
-            // إضافة تأثير النقلة القوية عند الكش
-            let isCheck = game.in_check();
-            if (isCheck) {
-                checkSound.play();
-                let $targetSquare = $('#board .square-' + target);
-                $targetSquare.addClass('brilliant-highlight');
-                // إضافة أيقونة التقييم
-                if ($targetSquare.find('.evaluation-icon').length === 0) {
-                     $targetSquare.append('<div class="evaluation-icon">!</div>');
+            let moveEvalType = 'normal';
+            let movedVal = pieceOrder[move.piece];
+            let capturedVal = move.captured ? pieceOrder[move.captured] : 0;
+
+            if (game.in_checkmate() || (move.promotion === 'q' && game.in_check())) {
+                moveEvalType = 'brilliant'; 
+            } else if (move.captured && capturedVal > movedVal) {
+                moveEvalType = 'great'; 
+            } else if (move.captured === 'q') {
+                moveEvalType = 'great'; 
+            }
+
+            if (moveEvalType === 'normal' && movedVal > 1) {
+                let isThreatenedByLesser = false;
+                let nextMoves = game.moves({ verbose: true });
+                for (let i = 0; i < nextMoves.length; i++) {
+                    if (nextMoves[i].to === target) {
+                        let enemyPieceVal = pieceOrder[nextMoves[i].piece];
+                        if (enemyPieceVal < movedVal || move.piece === 'q') {
+                            isThreatenedByLesser = true;
+                            break;
+                        }
+                    }
                 }
-            } else if (move.captured) {
-                captureSound.play();
+                if (isThreatenedByLesser) {
+                    moveEvalType = 'blunder'; 
+                }
+            }
+
+            let $targetSquare = $('#board .square-' + target);
+
+            // --- المهاجم يسمع صوت حركته فقط، ولا يسمع الكش ---
+            if (moveEvalType === 'brilliant') {
+                brilliantSound.play().catch(e=>{});
+                $targetSquare.addClass('eval-brilliant-bg').append('<div class="evaluation-icon icon-brilliant">!!</div>');
+            } else if (moveEvalType === 'great') {
+                greatSound.play().catch(e=>{});
+                $targetSquare.addClass('eval-great-bg').append('<div class="evaluation-icon icon-great">!</div>');
+            } else if (moveEvalType === 'blunder') {
+                errorSound.play().catch(e=>{});
+                $targetSquare.addClass('eval-blunder-bg').append('<div class="evaluation-icon icon-blunder">?</div>');
             } else {
-                moveSound.play();
+                if (move.captured) captureSound.play().catch(e=>{});
+                else moveSound.play().catch(e=>{});
             }
 
             highlightKingInCheck();
@@ -398,13 +396,11 @@
             checkGameStatus();
 
             set(gameRef, { 
-                fen: game.fen(), turn: game.turn(),
-                wTime: localWTime, bTime: localBTime,
+                fen: game.fen(), turn: game.turn(), wTime: localWTime, bTime: localBTime,
                 wName: dataCache.wName || '', bName: dataCache.bName || '',
                 wPhoto: dataCache.wPhoto || '', bPhoto: dataCache.bPhoto || '',
-                timeLimit: timeLimitGame,
-                resigned: dataCache.resigned || null,
-                lastMoveTo: isCheck ? target : null // حفظ المربع لإظهار التأثير للخصم
+                timeLimit: timeLimitGame, resigned: dataCache.resigned || null,
+                lastMoveTo: target, lastMoveType: moveEvalType
             });
             return true;
         }
@@ -415,9 +411,7 @@
                 if (game.in_checkmate()) {
                     let winnerName = game.turn() === 'w' ? (dataCache.bName || 'الأسود') : (dataCache.wName || 'الأبيض');
                     showGameOver("فاز " + winnerName, "بواسطة كش مات 🏆");
-                } else {
-                    showGameOver("تعادل", "انتهت المباراة بالتعادل 🤝");
-                }
+                } else { showGameOver("تعادل", "انتهت المباراة بالتعادل 🤝"); }
                 return true;
             }
             return false;
@@ -426,18 +420,11 @@
         function startLocalClock() {
             clearInterval(timerInterval);
             if (timeLimitGame <= 0 || dataCache.resigned) return; 
-
             timerInterval = setInterval(() => {
                 if (!opponentJoined || game.game_over() || dataCache.resigned) return;
-
-                if (game.turn() === 'w') {
-                    if (localWTime > 0) localWTime--;
-                } else {
-                    if (localBTime > 0) localBTime--;
-                }
-                
+                if (game.turn() === 'w') { if (localWTime > 0) localWTime--; } 
+                else { if (localBTime > 0) localBTime--; }
                 updateTimersUI(localWTime, localBTime);
-                
                 if (localWTime <= 0 || localBTime <= 0) {
                     clearInterval(timerInterval);
                     let winnerName = localWTime <= 0 ? (dataCache.bName || 'الأسود') : (dataCache.wName || 'الأبيض');
@@ -463,19 +450,13 @@
             if (myRole === 'w') {
                 let seconds = minutes * 60;
                 set(gameRef, { 
-                    fen: game.fen(), timeLimit: seconds,
-                    wTime: seconds, bTime: seconds,
-                    wName: creatorName, wPhoto: userPhoto,
-                    turn: 'w', resigned: null, lastMoveTo: null
+                    fen: game.fen(), timeLimit: seconds, wTime: seconds, bTime: seconds,
+                    wName: creatorName, wPhoto: userPhoto, turn: 'w', resigned: null, lastMoveTo: null, lastMoveType: 'normal'
                 });
-            } else {
-                update(gameRef, { bName: userName, bPhoto: userPhoto });
-            }
+            } else { update(gameRef, { bName: userName, bPhoto: userPhoto }); }
 
             var config = {
-                position: 'start',
-                draggable: true,
-                dropOffBoard: 'snapback', moveSpeed: 100, snapbackSpeed: 100, snapSpeed: 100,
+                position: 'start', draggable: true, dropOffBoard: 'snapback', moveSpeed: 100, snapbackSpeed: 100, snapSpeed: 100,
                 pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
@@ -490,20 +471,14 @@
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                        // الدائرة الحمراء للقطع الممكن أكلها
-                        if (isCapture) {
-                            $sq.append('<div class="highlight-capture"></div>');
-                        } else {
-                            $sq.append('<div class="highlight-dot"></div>');
-                        }
+                        if (isCapture) $sq.append('<div class="highlight-capture"></div>');
+                        else $sq.append('<div class="highlight-dot"></div>');
                     }
                 },
                 onDrop: function(source, target) {
                     removeHighlights();
                     if (game.turn() !== myRole) {
-                        let $sq = $('#board .square-' + source);
-                        $sq.addClass('error-flash');
-                        setTimeout(() => $sq.removeClass('error-flash'), 250);
+                        triggerErrorEffect(source); 
                         selectedTapSquare = null;
                         return 'snapback';
                     }
@@ -538,12 +513,8 @@
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                         // الدائرة الحمراء للقطع الممكن أكلها
-                        if (isCapture) {
-                            $sq.append('<div class="highlight-capture"></div>');
-                        } else {
-                            $sq.append('<div class="highlight-dot"></div>');
-                        }
+                        if (isCapture) $sq.append('<div class="highlight-capture"></div>');
+                        else $sq.append('<div class="highlight-dot"></div>');
                     }
                 } else {
                     removeHighlights();
@@ -575,26 +546,41 @@
                     if (data.fen !== game.fen()) {
                         game.load(data.fen);
                         board.position(data.fen);
-                        
-                        if (game.in_check()) checkSound.play();
-                        else if (game.history({verbose:true}).pop()?.captured) captureSound.play();
-                        else moveSound.play();
-                        
                         removeHighlights();
-                        // إظهار تأثير النقلة القوية إذا حدثت
-                        if (data.lastMoveTo) {
-                            let $lastSquare = $('#board .square-' + data.lastMoveTo);
-                            $lastSquare.addClass('brilliant-highlight');
-                            if ($lastSquare.find('.evaluation-icon').length === 0) {
-                                $lastSquare.append('<div class="evaluation-icon">!</div>');
+                        
+                        let isCheck = game.in_check();
+                        let isMyTurnNow = (game.turn() === myRole); // الخصم (أو أنت إذا استقبلت النقلة)
+
+                        // --- المدافع يسمع صوت الكش فقط إذا حدث كش، أو يسمع الأصوات الأخرى ---
+                        if (isMyTurnNow) {
+                            if (isCheck) {
+                                checkSound.play().catch(e=>{});
+                            } else {
+                                if (data.lastMoveType === 'brilliant') brilliantSound.play().catch(e=>{});
+                                else if (data.lastMoveType === 'great') greatSound.play().catch(e=>{});
+                                else if (data.lastMoveType === 'blunder') errorSound.play().catch(e=>{});
+                                else if (game.history({verbose:true}).pop()?.captured) captureSound.play().catch(e=>{});
+                                else moveSound.play().catch(e=>{});
                             }
                         }
-                        highlightKingInCheck();
-                        updateCapturedPieces();
-                        checkGameStatus();
                         
-                        localWTime = data.wTime;
-                        localBTime = data.bTime;
+                        // التأثيرات البصرية تظهر لكلا اللاعبين
+                        if (data.lastMoveTo && data.lastMoveType && data.lastMoveType !== 'normal') {
+                            let $lastSquare = $('#board .square-' + data.lastMoveTo);
+                            if (data.lastMoveType === 'brilliant') {
+                                $lastSquare.addClass('eval-brilliant-bg');
+                                if ($lastSquare.find('.evaluation-icon').length === 0) $lastSquare.append('<div class="evaluation-icon icon-brilliant">!!</div>');
+                            } else if (data.lastMoveType === 'great') {
+                                $lastSquare.addClass('eval-great-bg');
+                                if ($lastSquare.find('.evaluation-icon').length === 0) $lastSquare.append('<div class="evaluation-icon icon-great">!</div>');
+                            } else if (data.lastMoveType === 'blunder') {
+                                $lastSquare.addClass('eval-blunder-bg');
+                                if ($lastSquare.find('.evaluation-icon').length === 0) $lastSquare.append('<div class="evaluation-icon icon-blunder">?</div>');
+                            }
+                        }
+                        
+                        highlightKingInCheck(); updateCapturedPieces(); checkGameStatus();
+                        localWTime = data.wTime; localBTime = data.bTime;
                     } else if (localWTime === 0 && localBTime === 0 && data.timeLimit > 0) {
                         localWTime = data.wTime; localBTime = data.bTime;
                     }
@@ -602,13 +588,14 @@
                     updateTimersUI(localWTime, localBTime);
                     
                     if (data.wName && data.bName) {
-                        let oppName = myRole === 'w' ? data.bName : data.wName;
+                                                let oppName = myRole === 'w' ? data.bName : data.wName;
                         let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
-                        $('#opponent-name').text(oppName);
+                        $('#opponent-name').text(oppName).css("color", myRole === 'w' ? "#bababa" : "#111");
                         if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
                         
                         if (!opponentJoined) {
                             opponentJoined = true;
+                            gameStartSound.play().catch(e=>{}); 
                             $('#game-status').text('بدأت المعركة! ⚔️');
                             $('#invite-btn').hide(); $('#resign-btn').show(); 
                             startLocalClock(); 
@@ -619,21 +606,13 @@
         }
 
         function updateTimersUI(wTime, bTime) {
-            if (timeLimitGame <= 0) {
-                $('#my-timer').text('--:--'); $('#opponent-timer').text('--:--'); return;
-            }
+            if (timeLimitGame <= 0) { $('#my-timer').text('--:--'); $('#opponent-timer').text('--:--'); return; }
             function format(sec) {
-                if (sec < 0) sec = 0;
-                let m = Math.floor(sec / 60), s = sec % 60;
+                if (sec < 0) sec = 0; let m = Math.floor(sec / 60), s = sec % 60;
                 return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
             }
-            if (myRole === 'w') {
-                document.getElementById('my-timer').innerText = format(wTime);
-                document.getElementById('opponent-timer').innerText = format(bTime);
-            } else {
-                document.getElementById('my-timer').innerText = format(bTime);
-                document.getElementById('opponent-timer').innerText = format(wTime);
-            }
+            if (myRole === 'w') { document.getElementById('my-timer').innerText = format(wTime); document.getElementById('opponent-timer').innerText = format(bTime); } 
+            else { document.getElementById('my-timer').innerText = format(bTime); document.getElementById('opponent-timer').innerText = format(wTime); }
         }
 
         window.inviteFriend = function() {
