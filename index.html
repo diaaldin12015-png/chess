@@ -266,15 +266,11 @@
             }
         }
         
-        // دالة العودة للشاشة الرئيسية
+        // العودة للشاشة الرئيسية
         window.returnToMain = function() {
-            // إخفاء نافذة النهاية
             document.getElementById('game-over-modal').style.display = 'none';
-            // إظهار شاشة الإعدادات وإخفاء اللعبة
             document.getElementById('setup-screen').style.display = 'flex';
             document.getElementById('game-screen').style.display = 'none';
-            
-            // إعادة ضبط الرابط لإزالة معرف الغرفة
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
             window.history.pushState({path:newUrl},'',newUrl);
             roomId = null;
@@ -402,7 +398,6 @@
                 onDragStart: function(source, piece) {
                     if (!opponentJoined || game.game_over() || dataCache.resigned) return false;
                     
-                    // منع الإمساك بقطع الخصم
                     if (piece.search(myRole === 'w' ? /^b/ : /^w/) !== -1) return false;
 
                     removeHighlights();
@@ -419,7 +414,6 @@
                 onDrop: function(source, target) {
                     removeHighlights();
                     
-                    // إذا حاول اللعب ودوره لم يأتِ بعد، أعطِ وميض أحمر وأعد القطعة
                     if (game.turn() !== myRole) {
                         let $sq = $('#board .square-' + source);
                         $sq.addClass('error-flash');
@@ -438,20 +432,32 @@
             };
             board = Chessboard('board', config);
 
-            // اللعب عن طريق اللمس (Tap-to-Move)
-            $('#board').on('click', '.square-55d63', function() {
+            // اللعب عن طريق اللمس المحسن (Tap-to-Move) الذي يعمل على تيليجرام
+            $('#board').on('touchstart mousedown', '.square-55d63', function(e) {
                 if (!opponentJoined || game.game_over() || dataCache.resigned) return;
+                
+                // منع التعارض بين اللمس والنقر
+                if (e.type === 'mousedown' && ('ontouchstart' in window)) return;
+                
                 var clickedSquare = $(this).attr('data-square');
                 
+                // إذا كان هناك قطعة محددة واللاعب يضغط على مربع جديد (الهدف)
                 if (selectedTapSquare && selectedTapSquare !== clickedSquare && game.turn() === myRole) {
-                    let success = executeMove(selectedTapSquare, clickedSquare);
-                    if (success) {
-                        removeHighlights();
-                        selectedTapSquare = null;
-                        return;
+                    var moves = game.moves({ verbose: true });
+                    var isValidMove = moves.some(m => m.from === selectedTapSquare && m.to === clickedSquare);
+                    
+                    if (isValidMove) {
+                        e.preventDefault(); // إيقاف أي حدث آخر لضمان النقل الفوري
+                        let success = executeMove(selectedTapSquare, clickedSquare);
+                        if (success) {
+                            removeHighlights();
+                            selectedTapSquare = null;
+                            return;
+                        }
                     }
                 }
                 
+                // إذا لم يتم تحديد قطعة أو ضغط على قطعة أخرى له
                 var piece = game.get(clickedSquare);
                 if (piece && piece.color === myRole) {
                     removeHighlights();
@@ -463,6 +469,10 @@
                         var $sq = $('#board .square-' + moves[i].to);
                         $sq.append(`<div class="${isCapture ? 'highlight-capture' : 'highlight-dot'}"></div>`);
                     }
+                } else {
+                    removeHighlights();
+                    selectedTapSquare = null;
+                    highlightKingInCheck();
                 }
             });
 
@@ -472,12 +482,10 @@
                     dataCache = data;
                     timeLimitGame = data.timeLimit;
                     
-                    // معالجة حالة الانسحاب
                     if (data.resigned) {
                         clearInterval(timerInterval);
                         let winnerName = data.resigned === 'w' ? (data.bName || 'الأسود') : (data.wName || 'الأبيض');
                         
-                        // وضع علم الاستسلام على الملك المنسحب
                         $('#board .square-55d63').each(function() {
                             let sq = $(this).attr('data-square');
                             let piece = game.get(sq);
@@ -509,7 +517,6 @@
                     
                     updateTimersUI(localWTime, localBTime);
                     
-                    // تحديث بيانات الخصم فور توفرها
                     if (data.wName && data.bName) {
                         let oppName = myRole === 'w' ? data.bName : data.wName;
                         let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
