@@ -101,7 +101,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         const userName = tg.initDataUnsafe?.user?.first_name || "لاعب تيليجرام";
-        const botUsername = "chess_DA_bot"; 
 
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
         const captureSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3');
@@ -109,10 +108,12 @@
         let board = null;
         let game = new Chess();
         
-        // قراءة الـ roomId بشكل صحيح من الرابط أو تيليجرام
+        // التقاط رقم الغرفة مباشرة من الرابط المباشر (مثل ?room=xyz)
         let roomId = null;
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('startapp')) {
+        if (urlParams.has('room')) {
+            roomId = urlParams.get('room');
+        } else if (urlParams.has('startapp')) {
             roomId = urlParams.get('startapp');
         } else if (tg.initDataUnsafe?.start_param) {
             roomId = tg.initDataUnsafe.start_param;
@@ -255,8 +256,10 @@
             document.getElementById('black-timer').innerText = formatTime(blackTime);
         }
 
+        // تم تعديل طريقة المشاركة لتعتمد على الرابط المباشر للموقع مع رقم الغرفة
         window.inviteFriend = function() {
-            let shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?startapp=${roomId}&text=أتحداك في جيم شطرنج! ادخل الآن`;
+            let gameUrl = `https://diaaldin12015-png.github.io/chess/?room=${roomId}`;
+            let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(gameUrl)}&text=أتحداك في جيم شطرنج! ادخل العب معي الآن ♟️`;
             tg.openTelegramLink(shareUrl);
         }
     </script>
