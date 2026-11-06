@@ -56,6 +56,7 @@
             -webkit-touch-callout: none;
         }
         
+        /* تنسيق الألوان الديناميكي للاعبين (أبيض / أسود) */
         .player-info { 
             display: flex; justify-content: space-between; align-items: center; 
             padding: 10px 15px; border-radius: 10px; 
@@ -182,7 +183,8 @@
             <div class="modal-text" id="modal-result-text">انتهت اللعبة</div>
             <div class="modal-buttons">
                 <button class="modal-btn btn-play-again" onclick="location.reload()">لعب مجدداً</button>
-                <button class="modal-btn btn-exit" onclick="tg.close()">خروج</button>
+                <!-- تعديل زر الخروج للعودة للشاشة الرئيسية -->
+                <button class="modal-btn btn-exit" onclick="returnToMain()">خروج</button>
             </div>
         </div>
     </div>
@@ -262,6 +264,20 @@
             if (confirm("هل أنت متأكد أنك تريد الاستسلام والانسحاب؟")) {
                 update(gameRef, { resigned: myRole });
             }
+        }
+        
+        // دالة العودة للشاشة الرئيسية
+        window.returnToMain = function() {
+            // إخفاء نافذة النهاية
+            document.getElementById('game-over-modal').style.display = 'none';
+            // إظهار شاشة الإعدادات وإخفاء اللعبة
+            document.getElementById('setup-screen').style.display = 'flex';
+            document.getElementById('game-screen').style.display = 'none';
+            
+            // إعادة ضبط الرابط لإزالة معرف الغرفة
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.pushState({path:newUrl},'',newUrl);
+            roomId = null;
         }
 
         function removeHighlights() {
@@ -386,6 +402,7 @@
                 onDragStart: function(source, piece) {
                     if (!opponentJoined || game.game_over() || dataCache.resigned) return false;
                     
+                    // منع الإمساك بقطع الخصم
                     if (piece.search(myRole === 'w' ? /^b/ : /^w/) !== -1) return false;
 
                     removeHighlights();
@@ -402,6 +419,7 @@
                 onDrop: function(source, target) {
                     removeHighlights();
                     
+                    // إذا حاول اللعب ودوره لم يأتِ بعد، أعطِ وميض أحمر وأعد القطعة
                     if (game.turn() !== myRole) {
                         let $sq = $('#board .square-' + source);
                         $sq.addClass('error-flash');
@@ -454,10 +472,12 @@
                     dataCache = data;
                     timeLimitGame = data.timeLimit;
                     
+                    // معالجة حالة الانسحاب
                     if (data.resigned) {
                         clearInterval(timerInterval);
                         let winnerName = data.resigned === 'w' ? (data.bName || 'الأسود') : (data.wName || 'الأبيض');
                         
+                        // وضع علم الاستسلام على الملك المنسحب
                         $('#board .square-55d63').each(function() {
                             let sq = $(this).attr('data-square');
                             let piece = game.get(sq);
@@ -489,7 +509,14 @@
                     
                     updateTimersUI(localWTime, localBTime);
                     
+                    // تحديث بيانات الخصم فور توفرها
                     if (data.wName && data.bName) {
+                        let oppName = myRole === 'w' ? data.bName : data.wName;
+                        let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
+                        
+                        $('#opponent-name').text(oppName).css("color", myRole === 'w' ? "#bababa" : "#111");
+                        if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
+                        
                         if (!opponentJoined) {
                             opponentJoined = true;
                             $('#game-status').text('بدأت المعركة! ⚔️');
@@ -497,12 +524,6 @@
                             $('#resign-btn').show(); 
                             startLocalClock(); 
                         }
-                        
-                        let oppName = myRole === 'w' ? data.bName : data.wName;
-                        let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
-                        
-                        $('#opponent-name').text(oppName);
-                        if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
                     }
                 }
             });
