@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- هذا السطر لمنع المتصفح من عكس الألوان في الوضع الليلي -->
     <meta name="color-scheme" content="light">
     <title>شطرنج تيليجرام</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -102,8 +101,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); 
         const userName = tg.initDataUnsafe?.user?.first_name || "لاعب تيليجرام";
-        
-        // غير هذا الاسم إلى يوزر البوت الخاص بك
         const botUsername = "chess_DA_bot"; 
 
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
@@ -111,14 +108,23 @@
 
         let board = null;
         let game = new Chess();
-        let roomId = tg.initDataUnsafe?.start_param || null; 
+        
+        // قراءة الـ roomId بشكل صحيح من الرابط أو تيليجرام
+        let roomId = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('startapp')) {
+            roomId = urlParams.get('startapp');
+        } else if (tg.initDataUnsafe?.start_param) {
+            roomId = tg.initDataUnsafe.start_param;
+        }
+
         let myRole = 'w';
         let gameRef = null;
         
         let timerInterval = null;
         let whiteTime = 0, blackTime = 0;
         let timeEnabled = false;
-        let opponentJoined = false; // متغير للتحقق من دخول الخصم
+        let opponentJoined = false;
 
         if (roomId) {
             myRole = 'b';
@@ -164,7 +170,7 @@
                 pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
-                    if (!opponentJoined) return false; // منع اللعب إذا لم يدخل الخصم بعد
+                    if (!opponentJoined) return false;
                     if (game.game_over() || game.turn() !== myRole) return false;
                     if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
                         (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
@@ -199,7 +205,6 @@
                         moveSound.play();
                     }
                     
-                    // التحقق من تواجد اللاعبين معاً
                     if (data.wName && data.bName) {
                         opponentJoined = true;
                         $('#game-status').text('بدأت المعركة!');
@@ -219,7 +224,6 @@
                         updateTimersUI();
                         
                         clearInterval(timerInterval);
-                        // لا يبدأ الوقت إلا إذا دخل الخصم واللعبة لم تنتهِ
                         if (!game.game_over() && opponentJoined) {
                             timerInterval = setInterval(() => {
                                 if (data.turn === 'w') whiteTime--;
