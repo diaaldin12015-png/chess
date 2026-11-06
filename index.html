@@ -17,15 +17,14 @@
         :root { 
             --primary-color: #2563eb; 
             --dark-color: #1e40af; 
-            --bg-dark: #0f172a;
         }
         
+        /* خلفية الشاشة المتحركة بالكامل */
         body { 
             font-family: 'Cairo', sans-serif; 
-            /* خلفية متحركة لكامل الشاشة */
-            background: linear-gradient(-45deg, #0f172a, #1e3a8a, #172554, #020617);
+            background: linear-gradient(-45deg, #0f172a, #1e3a8a, #020617, #172554);
             background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            animation: gradientBG 12s ease infinite;
             color: #fff; 
             text-align: center; margin: 0; padding: 10px; 
             overflow: hidden; 
@@ -35,30 +34,37 @@
         
         #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; position: relative; overflow: hidden; }
         
+        .floating-piece { position: absolute; color: rgba(255, 255, 255, 0.04); font-size: 100px; animation: floatUp 15s linear infinite; z-index: -1; }
+        .p1 { left: 10%; animation-duration: 18s; animation-delay: 0s; }
+        .p2 { left: 50%; font-size: 140px; animation-duration: 22s; animation-delay: 5s; }
+        .p3 { left: 80%; animation-duration: 16s; animation-delay: 2s; }
+        @keyframes floatUp { 0% { transform: translateY(100vh) rotate(0deg); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; } }
+
         .setup-box {
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); 
-            padding: 35px 25px; border-radius: 30px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8); width: 85%; max-width: 330px;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(15px); 
+            padding: 35px 25px; border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8); width: 85%; max-width: 320px;
             border: 1px solid rgba(37, 99, 235, 0.4);
         }
-        .logo-icon { font-size: 65px; margin-bottom: 0px; color: var(--primary-color); text-shadow: 0 0 20px rgba(37, 99, 235, 0.8); }
-        .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 25px; color: #fff; letter-spacing: 1px;}
+        .logo-icon { font-size: 60px; margin-bottom: 0px; color: var(--primary-color); text-shadow: 0 0 20px rgba(37, 99, 235, 0.8); }
+        .logo-text { font-size: 30px; font-weight: 900; margin-bottom: 25px; color: #fff; letter-spacing: 1px;}
         
+        /* القائمة المنسدلة الدائرية */
         select { 
-            background: rgba(0,0,0,0.5); color: #fff; border: 2px solid rgba(255,255,255,0.1); 
-            padding: 12px 20px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
+            background: rgba(0,0,0,0.6); color: #fff; border: 2px solid rgba(255,255,255,0.1); 
+            padding: 10px 20px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
             border-radius: 50px; margin: 15px 0 25px; width: 100%; outline: none; cursor: pointer;
-            transition: 0.3s;
+            transition: 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
-        select:focus { border-color: var(--primary-color); background: rgba(0,0,0,0.7); }
+        select:focus { border-color: var(--primary-color); background: rgba(0,0,0,0.8); }
         
-        /* الأزرار الدائرية الاحترافية */
+        /* الأزرار الدائرية الصغيرة والاحترافية */
         .main-btn { 
             background: var(--primary-color); color: white; 
-            border: none; padding: 12px 24px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif;
+            border: none; padding: 10px 25px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif;
             border-radius: 50px; cursor: pointer; 
             box-shadow: 0 5px 0 var(--dark-color), 0 10px 20px rgba(37, 99, 235, 0.5); 
-            width: 100%; transition: 0.1s; letter-spacing: 0.5px;
+            width: 90%; transition: 0.1s; letter-spacing: 0.5px; margin: 0 auto; display: block;
         }
         .main-btn:active { transform: translateY(5px); box-shadow: 0 0 0 var(--dark-color); }
         
@@ -78,18 +84,18 @@
         }
         .player-header { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        /* القطع المأكولة بدقة عالية */
-        .captured-pieces { display: flex; flex-wrap: wrap; gap: 3px; justify-content: flex-start; margin-top: 5px; min-height: 22px; padding-left: 48px; }
-        .captured-pieces img { width: 22px; height: 22px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6)); }
+        /* القطع المأكولة الدائمة والعالية الدقة */
+        .captured-pieces { display: flex; flex-wrap: wrap; gap: 3px; justify-content: flex-start; margin-top: 5px; min-height: 24px; padding-left: 48px; }
+        .captured-pieces img { width: 22px; height: 22px; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.7)); }
         
-        .player-white { background: rgba(255,255,255,0.9); color: #111; border-right: 6px solid #fff; }
+        .player-white { background: rgba(255,255,255,0.95); color: #111; border-right: 6px solid #fff; }
         .player-white .timer { background: #111; color: #fff; }
 
-        .player-black { background: rgba(20,20,20,0.85); color: #fff; border-right: 6px solid #111; border: 1px solid #333; }
-        .player-black .timer { background: #111; color: #fff; border: 1px solid #333;}
+        .player-black { background: rgba(20,20,20,0.9); color: #fff; border-right: 6px solid #111; border: 1px solid #333; }
+        .player-black .timer { background: #111; color: #fff; border: 1px solid #444;}
         
         .player-details { display: flex; align-items: center; gap: 10px; }
-        .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #666; background-color: #1e1c19; }
+        .avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid #666; background-color: #1e1c19; }
         
         .timer { padding: 4px 12px; border-radius: 50px; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
         
@@ -114,11 +120,10 @@
         }
         .icon-brilliant { background-color: #0d9488; } .icon-great { background-color: #2563eb; } .icon-blunder { background-color: #dc2626; } 
         
-        .highlight-dot { width: 30%; height: 30%; background: rgba(0, 0, 0, 0.3); border-radius: 50%; position: absolute; top: 35%; left: 35%; pointer-events: none; }
+        .highlight-dot { width: 30%; height: 30%; background: rgba(0, 0, 0, 0.35); border-radius: 50%; position: absolute; top: 35%; left: 35%; pointer-events: none; }
         .highlight-capture { width: 100%; height: 100%; box-sizing: border-box; box-shadow: inset 0 0 0 6px rgba(220, 38, 38, 0.8); border-radius: 50%; position: absolute; top: 0; left: 0; pointer-events: none; }
         .surrender-flag { position: absolute; top: -15px; right: -5px; font-size: 28px; z-index: 100; filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.8)); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
-        /* نافذة النهاية ونافذة الترقية */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(6px); }
         .modal-content { background: rgba(15, 23, 42, 0.95); padding: 35px 25px; border-radius: 30px; text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.9); width: 85%; max-width: 330px; border: 1px solid rgba(37,99,235,0.4); animation: popIn 0.3s ease-out forwards; border-top: 6px solid var(--primary-color); }
         @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -126,7 +131,7 @@
         .modal-text { font-size: 16px; font-weight: 700; margin-bottom: 30px; color: #94a3b8; }
         
         .modal-buttons { display: flex; gap: 10px; justify-content: center; width: 100%; }
-        .modal-btn { flex: 1; padding: 12px 10px; font-size: 18px; font-weight: 900; font-family: 'Cairo', sans-serif; border-radius: 50px; cursor: pointer; border: none; transition: 0.1s; }
+        .modal-btn { flex: 1; padding: 10px 10px; font-size: 16px; font-weight: 900; font-family: 'Cairo', sans-serif; border-radius: 50px; cursor: pointer; border: none; transition: 0.1s; }
         .btn-play-again { background: var(--primary-color); color: white; box-shadow: 0 5px 0 var(--dark-color); }
         .btn-play-again:active { transform: translateY(5px); box-shadow: none; }
         .btn-exit { background: #334155; color: white; box-shadow: 0 5px 0 #0f172a; }
@@ -143,6 +148,9 @@
 </head>
 <body>
     <div id="setup-screen">
+        <div class="floating-piece p1">♞</div>
+        <div class="floating-piece p2">♛</div>
+        <div class="floating-piece p3">♜</div>
         <div class="setup-box">
             <div class="logo-icon">♟️</div>
             <div class="logo-text">شطرنج</div>
@@ -162,7 +170,7 @@
         <div class="player-info" id="opponent-info">
             <div class="player-header">
                 <div class="player-details">
-                    <img id="opponent-photo" class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+                    <img id="opponent-photo" class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
                     <span id="opponent-name">الخصم (ينتظر...)</span>
                 </div>
                 <div class="timer" id="opponent-timer">--:--</div>
@@ -175,7 +183,7 @@
         <div class="player-info" id="my-info">
             <div class="player-header">
                 <div class="player-details">
-                    <img id="my-photo" class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png">
+                    <img id="my-photo" class="avatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png">
                     <span id="my-name">أنت</span>
                 </div>
                 <div class="timer" id="my-timer">--:--</div>
@@ -184,13 +192,12 @@
         </div>
         
         <div class="action-buttons">
-            <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none;">أرسل دعوة لأصدقائك</button>
-            <button class="main-btn btn-resign" id="resign-btn" onclick="resignGame()" style="display:none;">انسحاب 🏳️</button>
+            <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none; margin:0;">أرسل دعوة لأصدقائك</button>
+            <button class="main-btn btn-resign" id="resign-btn" onclick="resignGame()" style="display:none; width:auto;">انسحاب 🏳️</button>
         </div>
         <div id="game-status" style="margin-top: 15px; color: var(--primary-color); font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
     </div>
 
-    <!-- نافذة نهاية اللعبة -->
     <div class="modal-overlay" id="game-over-modal">
         <div class="modal-content">
             <div class="modal-title" id="modal-result-title">النتيجة</div>
@@ -202,7 +209,7 @@
         </div>
     </div>
 
-    <!-- نافذة اختيار ترقية الجندي -->
+    <!-- نافذة الترقية -->
     <div class="modal-overlay" id="promotion-modal">
         <div class="promotion-box">
             <div class="promotion-title">اختر قطعة للترقية 👑</div>
@@ -217,24 +224,14 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAwUcJMBbkq13inccYMGIWgK0RM8Ix5jw4",
-            authDomain: "chessgame-c7428.firebaseapp.com",
-            databaseURL: "https://chessgame-c7428-default-rtdb.firebaseio.com",
-            projectId: "chessgame-c7428",
-            storageBucket: "chessgame-c7428.firebasestorage.app",
-            messagingSenderId: "309707784183",
-            appId: "1:309707784183:web:200d14274c27e7203cb8f2"
-        };
+        const firebaseConfig = { apiKey: "AIzaSyAwUcJMBbkq13inccYMGIWgK0RM8Ix5jw4", authDomain: "chessgame-c7428.firebaseapp.com", databaseURL: "https://chessgame-c7428-default-rtdb.firebaseio.com", projectId: "chessgame-c7428", storageBucket: "chessgame-c7428.firebasestorage.app", messagingSenderId: "309707784183", appId: "1:309707784183:web:200d14274c27e7203cb8f2" };
+        const app = initializeApp(firebaseConfig); const db = getDatabase(app);
         
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const tg = window.Telegram.WebApp;
-        tg.expand(); 
-        
-        const userName = tg.initDataUnsafe?.user?.first_name || "لاعب تيليجرام";
-        const defaultPhoto = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png";
-        const userPhoto = tg.initDataUnsafe?.user?.photo_url || defaultPhoto;
+        const tg = window.Telegram.WebApp; tg.expand(); 
+        const user = tg.initDataUnsafe?.user || {};
+        const userName = user.first_name || "لاعب تيليجرام";
+        const defaultAvatar = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+        const userPhoto = user.photo_url || defaultAvatar; // الحماية من اختفاء الصورة
 
         const moveSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/move-self.mp3');
         const captureSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/capture.mp3');
@@ -246,22 +243,17 @@
         const gameEndSound = new Audio('https://images.chesscomfiles.com/chess-themes/sounds/_MP3_/default/game-end.mp3');
 
         let board = null; let game = new Chess(); let roomId = null;
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('room')) roomId = urlParams.get('room');
-        else if (urlParams.has('startapp')) roomId = urlParams.get('startapp');
-        else if (tg.initDataUnsafe?.start_param) roomId = tg.initDataUnsafe.start_param;
-
         let myRole = 'w'; let gameRef = null; let timerInterval = null; let opponentJoined = false;
         let localWTime = 0; let localBTime = 0; let timeLimitGame = 0; let dataCache = {};
         let selectedTapSquare = null; let pendingPromotion = null;
         const pieceOrder = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 100 }; 
 
-        if (roomId) {
-            myRole = 'b';
-            document.getElementById('setup-screen').style.display = 'none';
-            document.getElementById('game-screen').style.display = 'block';
-            initGame(roomId);
-        }
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('room')) roomId = urlParams.get('room');
+        else if (urlParams.has('startapp')) roomId = urlParams.get('startapp');
+        else if (tg.initDataUnsafe?.start_param) roomId = tg.initDataUnsafe.start_param;
+
+        if (roomId) { myRole = 'b'; document.getElementById('setup-screen').style.display = 'none'; document.getElementById('game-screen').style.display = 'block'; initGame(roomId); }
 
         window.startGame = function() {
             let selectedMinutes = parseInt(document.getElementById('time-limit').value);
@@ -269,21 +261,16 @@
             myRole = 'w'; opponentJoined = false;
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
-            document.getElementById('invite-btn').style.display = 'inline-block';
+            document.getElementById('invite-btn').style.display = 'block';
             initGame(roomId, selectedMinutes, userName);
         }
 
-        window.resignGame = function() {
-            if (confirm("هل أنت متأكد أنك تريد الاستسلام والانسحاب؟")) update(gameRef, { resigned: myRole });
-        }
+        window.resignGame = function() { if (confirm("هل أنت متأكد أنك تريد الاستسلام؟")) update(gameRef, { resigned: myRole }); }
         
         window.returnToMain = function() {
-            document.getElementById('game-over-modal').style.display = 'none';
-            document.getElementById('setup-screen').style.display = 'flex';
-            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('game-over-modal').style.display = 'none'; document.getElementById('setup-screen').style.display = 'flex'; document.getElementById('game-screen').style.display = 'none';
             const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-            window.history.pushState({path:newUrl},'',newUrl);
-            roomId = null;
+            window.history.pushState({path:newUrl},'',newUrl); roomId = null;
         }
 
         function removeHighlights() {
@@ -295,8 +282,7 @@
             if (game.in_check()) {
                 let turn = game.turn();
                 $('#board .square-55d63').each(function() {
-                    let sq = $(this).attr('data-square');
-                    let piece = game.get(sq);
+                    let sq = $(this).attr('data-square'); let piece = game.get(sq);
                     if (piece && piece.type === 'k' && piece.color === turn) $(this).addClass('red-highlight');
                 });
             }
@@ -315,20 +301,18 @@
             document.getElementById('game-over-modal').style.display = 'flex';
         }
 
-        // جلب الصور بدقة عالية للقطع المأكولة (من سيرفرات Chess.com HD)
         function updateCapturedPieces() {
             let history = game.history({ verbose: true });
             let wCaptured = []; let bCaptured = [];
             history.forEach(move => {
                 if (move.captured) {
-                    if (move.color === 'w') wCaptured.push(move.captured);
-                    else bCaptured.push(move.captured);
+                    if (move.color === 'w') wCaptured.push(move.captured.toLowerCase());
+                    else bCaptured.push(move.captured.toLowerCase());
                 }
             });
             wCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             bCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             
-            // استخدام دقة Neo 150px
             let wHtml = wCaptured.map(p => `<img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/150/b${p}.png">`).join('');
             let bHtml = bCaptured.map(p => `<img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/150/w${p}.png">`).join('');
             
@@ -336,11 +320,9 @@
             else { $('#my-captured').html(bHtml); $('#opponent-captured').html(wHtml); }
         }
 
-        // إظهار نافذة الترقية
         function showPromotionModal(source, target) {
             pendingPromotion = { source, target };
-            let color = myRole;
-            let pieces = ['q', 'r', 'b', 'n'];
+            let color = myRole; let pieces = ['q', 'r', 'b', 'n'];
             let html = pieces.map(p => `<div class="promo-piece" onclick="choosePromotion('${p}')"><img src="https://images.chesscomfiles.com/chess-themes/pieces/neo/150/${color}${p}.png"></div>`).join('');
             document.getElementById('promo-options').innerHTML = html;
             document.getElementById('promotion-modal').style.display = 'flex';
@@ -348,16 +330,13 @@
 
         window.choosePromotion = function(promoPiece) {
             document.getElementById('promotion-modal').style.display = 'none';
-            if (pendingPromotion) {
-                executeMove(pendingPromotion.source, pendingPromotion.target, promoPiece);
-                pendingPromotion = null;
-            }
+            if (pendingPromotion) { executeMove(pendingPromotion.source, pendingPromotion.target, promoPiece); pendingPromotion = null; }
         }
                     function executeMove(source, target, promo = 'q') {
             var move = game.move({ from: source, to: target, promotion: promo });
             if (move === null) return false; 
             
-            board.position(game.fen(), false); // يطبق التبييت وحركات القطع فوراً
+            board.position(game.fen(), false); 
             removeHighlights(); 
 
             let moveEvalType = 'normal';
@@ -372,10 +351,8 @@
                 let isThreatenedByLesser = false;
                 let nextMoves = game.moves({ verbose: true });
                 for (let i = 0; i < nextMoves.length; i++) {
-                    if (nextMoves[i].to === target) {
-                        if (pieceOrder[nextMoves[i].piece] < movedVal || move.piece === 'q') {
-                            isThreatenedByLesser = true; break;
-                        }
+                    if (nextMoves[i].to === target && (pieceOrder[nextMoves[i].piece] < movedVal || move.piece === 'q')) {
+                        isThreatenedByLesser = true; break;
                     }
                 }
                 if (isThreatenedByLesser) moveEvalType = 'blunder'; 
@@ -393,8 +370,7 @@
                 errorSound.play().catch(e=>{});
                 $targetSquare.addClass('eval-blunder-bg').append('<div class="evaluation-icon icon-blunder">?</div>');
             } else {
-                if (move.captured) captureSound.play().catch(e=>{});
-                else moveSound.play().catch(e=>{});
+                if (move.captured) captureSound.play().catch(e=>{}); else moveSound.play().catch(e=>{});
             }
 
             highlightKingInCheck(); updateCapturedPieces(); checkGameStatus();
@@ -409,22 +385,16 @@
             return true;
         }
 
-        // تطبيق كل قوانين الشطرنج الرسمية (تعادل 50 نقلة، تكرار 3 مرات، خنق، كش مات)
         function checkGameStatus() {
             if (game.game_over()) {
                 clearInterval(timerInterval);
                 if (game.in_checkmate()) {
                     let winnerName = game.turn() === 'w' ? (dataCache.bName || 'الأسود') : (dataCache.wName || 'الأبيض');
                     showGameOver("فاز " + winnerName, "بواسطة كش مات 🏆");
-                } else if (game.in_stalemate()) {
-                    showGameOver("تعادل", "خنق الملك (Stalemate) 🤝");
-                } else if (game.in_threefold_repetition()) {
-                    showGameOver("تعادل", "تكرار الوضع 3 مرات 🤝");
-                } else if (game.insufficient_material()) {
-                    showGameOver("تعادل", "نقص القطع لإحداث مات 🤝");
-                } else {
-                    showGameOver("تعادل", "قاعدة الـ 50 نقلة 🤝");
-                }
+                } else if (game.in_stalemate()) { showGameOver("تعادل", "خنق الملك (Stalemate) 🤝");
+                } else if (game.in_threefold_repetition()) { showGameOver("تعادل", "تكرار الوضع 3 مرات 🤝");
+                } else if (game.insufficient_material()) { showGameOver("تعادل", "نقص القطع لإحداث مات 🤝");
+                } else { showGameOver("تعادل", "قاعدة الـ 50 نقلة 🤝"); }
                 return true;
             }
             return false;
@@ -435,8 +405,7 @@
             if (timeLimitGame <= 0 || dataCache.resigned) return; 
             timerInterval = setInterval(() => {
                 if (!opponentJoined || game.game_over() || dataCache.resigned) return;
-                if (game.turn() === 'w') { if (localWTime > 0) localWTime--; } 
-                else { if (localBTime > 0) localBTime--; }
+                if (game.turn() === 'w') { if (localWTime > 0) localWTime--; } else { if (localBTime > 0) localBTime--; }
                 updateTimersUI(localWTime, localBTime);
                 if (localWTime <= 0 || localBTime <= 0) {
                     clearInterval(timerInterval);
@@ -450,57 +419,45 @@
             gameRef = ref(db, 'rooms/' + id);
             
             if (myRole === 'w') {
-                $('#my-info').addClass('player-white').removeClass('player-black');
-                $('#opponent-info').addClass('player-black').removeClass('player-white');
+                $('#my-info').addClass('player-white').removeClass('player-black'); $('#opponent-info').addClass('player-black').removeClass('player-white');
             } else {
-                $('#my-info').addClass('player-black').removeClass('player-white');
-                $('#opponent-info').addClass('player-white').removeClass('player-black');
+                $('#my-info').addClass('player-black').removeClass('player-white'); $('#opponent-info').addClass('player-white').removeClass('player-black');
             }
 
-            document.getElementById('my-name').innerText = userName;
-            document.getElementById('my-photo').src = userPhoto;
+            document.getElementById('my-name').innerText = userName; document.getElementById('my-photo').src = userPhoto;
             
             if (myRole === 'w') {
                 let seconds = minutes * 60;
                 set(gameRef, { 
                     fen: game.fen(), timeLimit: seconds, wTime: seconds, bTime: seconds,
-                    wName: creatorName, wPhoto: userPhoto, turn: 'w', resigned: null, lastMoveTo: null, lastMoveType: 'normal'
+                    wName: userName, wPhoto: userPhoto, turn: 'w', resigned: null, lastMoveTo: null, lastMoveType: 'normal'
                 });
-            } else { update(gameRef, { bName: userName, bPhoto: userPhoto }); }
+            } else { 
+                update(gameRef, { bName: userName, bPhoto: userPhoto }); 
+            }
 
             var config = {
                 position: 'start', draggable: true, dropOffBoard: 'snapback', moveSpeed: 100, snapbackSpeed: 100, snapSpeed: 100,
-                // استيراد قطع HD (Neo 150px) للرقعة
                 pieceTheme: function(piece) { return `https://images.chesscomfiles.com/chess-themes/pieces/neo/150/${piece.toLowerCase()}.png`; },
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
                     if (!opponentJoined || game.game_over() || dataCache.resigned) return false;
                     if (piece.search(myRole === 'w' ? /^b/ : /^w/) !== -1) return false;
-
-                    removeHighlights();
-                    selectedTapSquare = source;
+                    removeHighlights(); selectedTapSquare = source;
                     $('#board .square-' + source).addClass('yellow-highlight');
-
                     var moves = game.moves({ square: source, verbose: true });
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                        if (isCapture) $sq.append('<div class="highlight-capture"></div>');
-                        else $sq.append('<div class="highlight-dot"></div>');
+                        if (isCapture) $sq.append('<div class="highlight-capture"></div>'); else $sq.append('<div class="highlight-dot"></div>');
                     }
                 },
                 onDrop: function(source, target) {
                     removeHighlights();
                     if (game.turn() !== myRole) { triggerErrorEffect(source); selectedTapSquare = null; return 'snapback'; }
-                    
-                    // التحقق إذا كانت النقلة تحتاج لترقية جندي
                     let moves = game.moves({verbose: true});
                     let isPromo = moves.some(m => m.from === source && m.to === target && m.flags.includes('p'));
-                    if (isPromo) {
-                        showPromotionModal(source, target);
-                        return 'snapback';
-                    }
-
+                    if (isPromo) { showPromotionModal(source, target); return 'snapback'; }
                     let success = executeMove(source, target);
                     if (!success) { selectedTapSquare = null; return 'snapback'; }
                     selectedTapSquare = null;
@@ -508,7 +465,6 @@
             };
             board = Chessboard('board', config);
 
-            // تفعيل الترقية في اللعب باللمس أيضاً
             $('#board').on('touchstart mousedown', '.square-55d63', function(e) {
                 if (!opponentJoined || game.game_over() || dataCache.resigned) return;
                 if (e.type === 'mousedown' && ('ontouchstart' in window)) return;
@@ -519,10 +475,7 @@
                     var moveObj = moves.find(m => m.from === selectedTapSquare && m.to === clickedSquare);
                     if (moveObj) {
                         e.preventDefault(); 
-                        if (moveObj.flags.includes('p')) {
-                            showPromotionModal(selectedTapSquare, clickedSquare);
-                            return;
-                        }
+                        if (moveObj.flags.includes('p')) { showPromotionModal(selectedTapSquare, clickedSquare); return; }
                         let success = executeMove(selectedTapSquare, clickedSquare);
                         if (success) { removeHighlights(); selectedTapSquare = null; return; }
                     }
@@ -536,12 +489,9 @@
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                        if (isCapture) $sq.append('<div class="highlight-capture"></div>');
-                        else $sq.append('<div class="highlight-dot"></div>');
+                        if (isCapture) $sq.append('<div class="highlight-capture"></div>'); else $sq.append('<div class="highlight-dot"></div>');
                     }
-                } else {
-                    removeHighlights(); selectedTapSquare = null; highlightKingInCheck();
-                }
+                } else { removeHighlights(); selectedTapSquare = null; highlightKingInCheck(); }
             });
 
             onValue(gameRef, (snapshot) => {
@@ -564,7 +514,6 @@
 
                     if (data.fen !== game.fen()) {
                         game.load(data.fen); board.position(data.fen); removeHighlights();
-                        
                         let isCheck = game.in_check(); let isMyTurnNow = (game.turn() === myRole); 
                         if (isMyTurnNow) {
                             if (isCheck) checkSound.play().catch(e=>{});
@@ -599,13 +548,15 @@
                     
                     updateTimersUI(localWTime, localBTime);
                     
-                    if (data.wName && data.bName) {
-                        let oppName = myRole === 'w' ? data.bName : data.wName;
-                        let oppPhoto = myRole === 'w' ? data.bPhoto : data.wPhoto;
-                        $('#opponent-name').text(oppName).css("color", myRole === 'w' ? "#94a3b8" : "#111");
-                        if(oppPhoto) $('#opponent-photo').attr('src', oppPhoto);
+                    // التزامن الجذري للصورة والاسم (مستحيل يختفوا الآن)
+                    if (data.wName || data.bName) {
+                        let oppName = myRole === 'w' ? (data.bName || "الخصم يجهز...") : (data.wName || "الخصم يجهز...");
+                        let oppPhoto = myRole === 'w' ? (data.bPhoto || defaultAvatar) : (data.wPhoto || defaultAvatar);
                         
-                        if (!opponentJoined) {
+                        $('#opponent-name').text(oppName).css("color", myRole === 'w' ? "#94a3b8" : "#111");
+                        $('#opponent-photo').attr('src', oppPhoto);
+                        
+                        if (data.wName && data.bName && !opponentJoined) {
                             opponentJoined = true;
                             gameStartSound.play().catch(e=>{}); 
                             $('#game-status').text('بدأت المعركة! ⚔️');
