@@ -5,75 +5,148 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="color-scheme" content="light">
     <title>شطرنج تيليجرام</title>
+    
+    <!-- استيراد خط Cairo الفخم من جوجل -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     
     <style>
-        :root {
-            color-scheme: light;
-        }
+        :root { color-scheme: light; }
         body { 
-            font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background: #12121a; color: #fff; 
+            font-family: 'Cairo', sans-serif; /* تطبيق الخط الجديد */
+            background: #312e2b; /* لون خلفية Chess.com */
+            color: #fff; 
             text-align: center; margin: 0; padding: 10px; 
             overflow: hidden; 
-        }
-        #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; }
-        .logo-text { font-size: 40px; font-weight: bold; margin-bottom: 20px; color: #ffca28; }
-        select { 
-            background: #2a2a40; color: #fff; border: 1px solid #4e54c8; 
-            padding: 10px; font-size: 16px; border-radius: 8px; margin: 15px 0; width: 200px;
-        }
-        .main-btn { 
-            background: linear-gradient(135deg, #4e54c8, #8f94fb); color: white; 
-            border: none; padding: 15px 30px; font-size: 18px; font-weight: bold;
-            border-radius: 10px; cursor: pointer; box-shadow: 0 5px 15px rgba(78,84,200,0.4);
-            width: 200px;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
+        /* تصميم شاشة البداية الفخمة */
+        #setup-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 95vh; }
+        .setup-box {
+            background: #262421;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 85%;
+            max-width: 350px;
+        }
+        .logo-icon { font-size: 60px; margin-bottom: 5px; color: #81b64c; text-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .logo-text { font-size: 32px; font-weight: 900; margin-bottom: 25px; color: #fff; }
+        
+        select { 
+            background: #1e1c19; color: #fff; border: 2px solid #3d3b39; 
+            padding: 12px 15px; font-size: 16px; font-family: 'Cairo', sans-serif; font-weight: 700;
+            border-radius: 10px; margin: 15px 0 25px; width: 100%; outline: none;
+            cursor: pointer;
+        }
+        
+        /* أزرار اللعبة بستايل Chess.com */
+        .main-btn { 
+            background: #81b64c; color: white; 
+            border: none; padding: 15px 30px; font-size: 20px; font-weight: 900; font-family: 'Cairo', sans-serif;
+            border-radius: 10px; cursor: pointer; 
+            box-shadow: 0 6px 0 #537a31; /* تأثير 3D للزر */
+            width: 100%; transition: 0.1s;
+            letter-spacing: 0.5px;
+        }
+        .main-btn:active { transform: translateY(6px); box-shadow: none; }
+        
         #game-screen { display: none; }
-        #board { width: 100%; max-width: 400px; margin: 10px auto; border-radius: 5px; box-shadow: 0 0 15px rgba(0,0,0,0.8); }
+        #board { width: 100%; max-width: 400px; margin: 15px auto; border-radius: 5px; box-shadow: 0 6px 20px rgba(0,0,0,0.6); }
+        
         .player-info { 
             display: flex; justify-content: space-between; align-items: center; 
-            background: #2a2a40; padding: 10px 15px; border-radius: 8px; 
-            max-width: 370px; margin: 5px auto; font-weight: bold;
+            background: #262421; padding: 12px 20px; border-radius: 10px; 
+            max-width: 370px; margin: 5px auto; font-weight: 700; font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .timer { background: #1e1e2f; padding: 5px 10px; border-radius: 5px; color: #ffca28; font-size: 18px; }
-        #invite-btn { margin-top: 15px; background: #25d366; }
+        .timer { 
+            background: #1a1917; padding: 6px 15px; border-radius: 6px; 
+            color: #fff; font-size: 20px; font-weight: 900; 
+            letter-spacing: 1px;
+        }
+        #invite-btn { margin-top: 20px; }
+
+        /* تأثيرات الرقعة الاحترافية */
+        .yellow-highlight { background-color: rgba(255, 255, 51, 0.5) !important; }
+        .red-highlight { background-color: rgba(235, 97, 80, 0.9) !important; }
+        
+        .highlight-dot {
+            width: 30%; height: 30%; background: rgba(0, 0, 0, 0.25);
+            border-radius: 50%; position: absolute;
+            top: 35%; left: 35%; pointer-events: none;
+        }
+        .highlight-capture {
+            width: 100%; height: 100%; box-sizing: border-box;
+            box-shadow: inset 0 0 0 5px rgba(0, 0, 0, 0.25);
+            border-radius: 50%; position: absolute;
+            top: 0; left: 0; pointer-events: none;
+        }
+
+        /* نافذة نهاية اللعب بستايل Chess.com */
+        #game-over-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75); justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: #262421; padding: 35px 25px; border-radius: 16px; text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.7); width: 85%; max-width: 320px;
+            animation: popIn 0.3s ease-out forwards;
+            border-top: 6px solid #81b64c;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .modal-title { font-size: 30px; font-weight: 900; color: #fff; margin-bottom: 8px; font-family: 'Cairo', sans-serif;}
+        .modal-text { font-size: 16px; font-weight: 700; margin-bottom: 30px; color: #bababa; }
     </style>
 </head>
 <body>
 
     <div id="setup-screen">
-        <div class="logo-text">شطرنج</div>
-        <p style="color: #aaa; font-size: 14px;">اختر وقت المباراة</p>
-        
-        <select id="time-limit">
-            <option value="0">بدون وقت (مفتوح)</option>
-            <option value="1">1 دقيقة (رصاصة)</option>
-            <option value="3">3 دقائق (سريع)</option>
-            <option value="5" selected>5 دقائق (خاطف)</option>
-            <option value="10">10 دقائق (كلاسيك)</option>
-        </select>
-        
-        <button class="main-btn" onclick="startGame()">بدء اللعب</button>
+        <div class="setup-box">
+            <div class="logo-icon">♟️</div>
+            <div class="logo-text">شطرنج</div>
+            <p style="color: #999; font-size: 15px; font-weight: 700; margin-bottom: 10px;">اختر وقت المباراة</p>
+            <select id="time-limit">
+                <option value="0">بدون وقت (مفتوح)</option>
+                <option value="1">1 دقيقة (رصاصة)</option>
+                <option value="3">3 دقائق (سريع)</option>
+                <option value="5" selected>5 دقائق (خاطف)</option>
+                <option value="10">10 دقائق (كلاسيك)</option>
+            </select>
+            <button class="main-btn" onclick="startGame()">العب الآن</button>
+        </div>
     </div>
 
     <div id="game-screen">
         <div class="player-info">
-            <span id="opponent-name">الخصم (ينتظر...)</span>
+            <span id="opponent-name" style="color: #bababa;">الخصم (ينتظر...)</span>
             <div class="timer" id="black-timer">--:--</div>
         </div>
-        
         <div id="board"></div>
-        
         <div class="player-info">
             <span id="my-name">أنت</span>
             <div class="timer" id="white-timer">--:--</div>
         </div>
+        <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none; max-width: 370px;">أرسل دعوة لأصدقائك</button>
+        <div id="game-status" style="margin-top: 15px; color: #81b64c; font-weight: 900; font-size: 18px;">بانتظار الخصم...</div>
+    </div>
 
-        <button class="main-btn" id="invite-btn" onclick="inviteFriend()" style="display:none;">أرسل دعوة لأصدقائك</button>
-        <div id="game-status" style="margin-top: 10px; color: #4caf50; font-weight: bold;">بانتظار الخصم...</div>
+    <!-- لائحة النهاية بستايل Chess.com -->
+    <div id="game-over-modal">
+        <div class="modal-content">
+            <div class="modal-title" id="modal-result-title">فاز الأبيض</div>
+            <div class="modal-text" id="modal-result-text">بواسطة كش مات</div>
+            <button class="main-btn" onclick="location.reload()">لعب من جديد</button>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -91,8 +164,7 @@
             projectId: "chessgame-c7428",
             storageBucket: "chessgame-c7428.firebasestorage.app",
             messagingSenderId: "309707784183",
-            appId: "1:309707784183:web:200d14274c27e7203cb8f2",
-            measurementId: "G-N0JJD3WF66"
+            appId: "1:309707784183:web:200d14274c27e7203cb8f2"
         };
         
         const app = initializeApp(firebaseConfig);
@@ -108,24 +180,17 @@
         let board = null;
         let game = new Chess();
         
-        // التقاط رقم الغرفة مباشرة من الرابط المباشر (مثل ?room=xyz)
         let roomId = null;
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('room')) {
-            roomId = urlParams.get('room');
-        } else if (urlParams.has('startapp')) {
-            roomId = urlParams.get('startapp');
-        } else if (tg.initDataUnsafe?.start_param) {
-            roomId = tg.initDataUnsafe.start_param;
-        }
+        if (urlParams.has('room')) roomId = urlParams.get('room');
+        else if (urlParams.has('startapp')) roomId = urlParams.get('startapp');
+        else if (tg.initDataUnsafe?.start_param) roomId = tg.initDataUnsafe.start_param;
 
         let myRole = 'w';
         let gameRef = null;
-        
         let timerInterval = null;
-        let whiteTime = 0, blackTime = 0;
-        let timeEnabled = false;
         let opponentJoined = false;
+        let dataCache = {};
 
         if (roomId) {
             myRole = 'b';
@@ -147,9 +212,46 @@
             initGame(roomId, selectedMinutes, userName);
         }
 
+        function removeHighlights() {
+            $('#board .square-55d63').removeClass('yellow-highlight red-highlight');
+            $('#board .square-55d63').find('.highlight-dot, .highlight-capture').remove();
+        }
+
+        function highlightKingInCheck() {
+            if (game.in_check()) {
+                let turn = game.turn();
+                $('#board .square-55d63').each(function() {
+                    let sq = $(this).attr('data-square');
+                    let piece = game.get(sq);
+                    if (piece && piece.type === 'k' && piece.color === turn) {
+                        $(this).addClass('red-highlight');
+                    }
+                });
+            }
+        }
+
+        function showGameOver(title, message) {
+            document.getElementById('modal-result-title').innerText = title;
+            document.getElementById('modal-result-text').innerText = message;
+            document.getElementById('game-over-modal').style.display = 'flex';
+        }
+
+        function checkGameStatus() {
+            if (game.game_over()) {
+                if (game.in_checkmate()) {
+                    let winner = game.turn() === 'w' ? 'فاز الأسود' : 'فاز الأبيض';
+                    showGameOver(winner, "بواسطة كش مات");
+                } else {
+                    showGameOver("تعادل", "انتهت المباراة بالتعادل");
+                }
+                return true;
+            }
+            return false;
+        }
+
         function initGame(id, minutes = 0, creatorName = "") {
             gameRef = ref(db, 'rooms/' + id);
-            document.getElementById('my-name').innerText = userName + (myRole === 'w' ? ' (أبيض)' : ' (أسود)');
+            document.getElementById('my-name').innerText = userName;
             
             if (myRole === 'w') {
                 let seconds = minutes * 60;
@@ -165,33 +267,54 @@
             } else {
                 set(ref(db, 'rooms/' + id + '/bName'), userName);
             }
+
             var config = {
                 position: 'start',
                 draggable: true,
+                moveSpeed: 'fast',
+                snapbackSpeed: 'fast',
+                snapSpeed: 'fast',
                 pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
-                    if (!opponentJoined) return false;
-                    if (game.game_over() || game.turn() !== myRole) return false;
-                    if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-                        (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-                        return false;
+                    if (!opponentJoined || game.game_over() || game.turn() !== myRole) return false;
+                    if (piece.search(myRole === 'w' ? /^b/ : /^w/) !== -1) return false;
+
+                    removeHighlights();
+                    $('#board .square-' + source).addClass('yellow-highlight');
+
+                    var moves = game.moves({ square: source, verbose: true });
+                    for (var i = 0; i < moves.length; i++) {
+                        var isCapture = game.get(moves[i].to) !== null;
+                        var $sq = $('#board .square-' + moves[i].to);
+                        $sq.append(`<div class="${isCapture ? 'highlight-capture' : 'highlight-dot'}"></div>`);
                     }
                 },
                 onDrop: function(source, target) {
+                    removeHighlights();
                     var move = game.move({ from: source, to: target, promotion: 'q' });
                     if (move === null) return 'snapback';
                     
                     if (move.captured) captureSound.play();
                     else moveSound.play();
 
-                    let currentTurnTime = (myRole === 'w') ? whiteTime : blackTime;
+                    highlightKingInCheck();
+                    checkGameStatus();
+
+                    let now = Date.now();
+                    let elapsed = (now - dataCache.lastMoveTime) / 1000;
+                    let currentW = dataCache.wTime;
+                    let currentB = dataCache.bTime;
+
+                    if (myRole === 'w') currentW = Math.max(0, currentW - elapsed);
+                    else currentB = Math.max(0, currentB - elapsed);
+
                     set(gameRef, { 
-                        fen: game.fen(),
-                        turn: game.turn(),
-                        wTime: myRole==='w' ? currentTurnTime : whiteTime,
-                        bTime: myRole==='b' ? currentTurnTime : blackTime,
-                        lastMoveTime: Date.now()
+                        fen: game.fen(), turn: game.turn(),
+                        wTime: currentW, bTime: currentB,
+                        wName: dataCache.wName || '', bName: dataCache.bName || '',
+                        timeLimit: dataCache.timeLimit || 0,
+                        lastMoveTime: now
                     });
                 }
             };
@@ -200,63 +323,65 @@
             onValue(gameRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
+                    if (!dataCache.lastMoveTime) dataCache = data; 
+                    else dataCache = {...dataCache, ...data};
+
                     if (data.fen !== game.fen()) {
                         game.load(data.fen);
                         board.position(data.fen);
                         moveSound.play();
+                        removeHighlights();
+                        highlightKingInCheck();
+                        checkGameStatus();
                     }
                     
                     if (data.wName && data.bName) {
                         opponentJoined = true;
                         $('#game-status').text('بدأت المعركة!');
                         $('#invite-btn').hide();
-                        
-                        if(myRole === 'w') {
-                            $('#opponent-name').text(data.bName + ' (أسود)');
-                        } else {
-                            $('#opponent-name').text(data.wName + ' (أبيض)');
-                        }
+                        let oppName = myRole === 'w' ? data.bName : data.wName;
+                        $('#opponent-name').text(oppName).css("color", "#fff");
                     }
 
-                    timeEnabled = data.timeLimit > 0;
-                    if (timeEnabled) {
-                        whiteTime = data.wTime;
-                        blackTime = data.bTime;
-                        updateTimersUI();
-                        
+                    if (data.timeLimit > 0) {
                         clearInterval(timerInterval);
                         if (!game.game_over() && opponentJoined) {
                             timerInterval = setInterval(() => {
-                                if (data.turn === 'w') whiteTime--;
-                                else blackTime--;
-                                updateTimersUI();
+                                let now = Date.now();
+                                let elapsed = (now - dataCache.lastMoveTime) / 1000;
+                                let dispW = dataCache.wTime;
+                                let dispB = dataCache.bTime;
+
+                                if (dataCache.turn === 'w') dispW = Math.max(0, dispW - elapsed);
+                                else dispB = Math.max(0, dispB - elapsed);
+
+                                updateTimersUI(dispW, dispB);
                                 
-                                if (whiteTime <= 0 || blackTime <= 0) {
+                                if (dispW <= 0 || dispB <= 0) {
                                     clearInterval(timerInterval);
-                                    $('#game-status').text('انتهى الوقت! ' + (whiteTime <= 0 ? 'الأسود' : 'الأبيض') + ' فاز.');
+                                    let winnerText = dispW <= 0 ? 'فاز الأسود' : 'فاز الأبيض';
+                                    showGameOver(winnerText, "بسبب نفاد الوقت");
                                 }
-                            }, 1000);
+                            }, 200);
+                        } else {
+                            updateTimersUI(data.wTime, data.bTime);
                         }
-                    } else {
-                        $('#white-timer').text('--:--');
-                        $('#black-timer').text('--:--');
                     }
                 }
             });
         }
 
-        function updateTimersUI() {
-            function formatTime(sec) {
-                if(sec < 0) sec = 0;
-                let m = Math.floor(sec / 60);
-                let s = sec % 60;
+        function updateTimersUI(wTime, bTime) {
+            function format(sec) {
+                sec = Math.floor(sec);
+                if (sec < 0) sec = 0;
+                let m = Math.floor(sec / 60), s = sec % 60;
                 return (m < 10 ? "0" : "") + m + ":" + (s < 10 ? "0" : "") + s;
             }
-            document.getElementById('white-timer').innerText = formatTime(whiteTime);
-            document.getElementById('black-timer').innerText = formatTime(blackTime);
+            document.getElementById('white-timer').innerText = format(wTime);
+            document.getElementById('black-timer').innerText = format(bTime);
         }
 
-        // تم تعديل طريقة المشاركة لتعتمد على الرابط المباشر للموقع مع رقم الغرفة
         window.inviteFriend = function() {
             let gameUrl = `https://diaaldin12015-png.github.io/chess/?room=${roomId}`;
             let shareUrl = `https://t.me/share/url?url=${encodeURIComponent(gameUrl)}&text=أتحداك في جيم شطرنج! ادخل العب معي الآن ♟️`;
