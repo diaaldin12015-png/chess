@@ -17,7 +17,7 @@
         :root { color-scheme: light; }
         body { 
             font-family: 'Cairo', sans-serif; 
-            background: #2a2825; /* لون أعمق قليلاً لبروز الرقعة */
+            background: #2a2825; 
             color: #fff; 
             text-align: center; margin: 0; padding: 10px; 
             overflow: hidden; 
@@ -54,6 +54,7 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.6);
             touch-action: none; 
             -webkit-touch-callout: none;
+            position: relative; /* لجعل الأيقونات تتوضع بشكل صحيح */
         }
         
         .player-info { 
@@ -98,17 +99,39 @@
         .error-flash { background-color: rgba(255, 0, 0, 0.7) !important; }
         
         /* تأثير النقلة القوية (أزرق/أخضر فاتح) */
-        .brilliant-highlight { background-color: rgba(43, 178, 178, 0.6) !important; box-shadow: inset 0 0 15px rgba(255,255,255,0.5); }
+        .brilliant-highlight { 
+            background-color: rgba(43, 178, 178, 0.6) !important; 
+            box-shadow: inset 0 0 15px rgba(255,255,255,0.5); 
+        }
         
+        /* أيقونة التقييم (علامة التعجب) */
+        .evaluation-icon {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50; /* أخضر */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 100;
+            border: 2px solid white;
+        }
+        
+        /* الدائرة الحمراء لقطع الخصم */
         .highlight-dot {
             width: 30%; height: 30%; background: rgba(0, 0, 0, 0.25);
             border-radius: 50%; position: absolute;
             top: 35%; left: 35%; pointer-events: none;
         }
-        /* الإطار الأحمر للقطع الممكن أكلها */
         .highlight-capture {
             width: 100%; height: 100%; box-sizing: border-box;
-            box-shadow: inset 0 0 0 6px rgba(255, 51, 51, 0.75);
+            box-shadow: inset 0 0 0 6px rgba(255, 51, 51, 0.75); /* إطار أحمر */
             border-radius: 50%; position: absolute;
             top: 0; left: 0; pointer-events: none;
         }
@@ -295,7 +318,7 @@
 
         function removeHighlights() {
             $('#board .square-55d63').removeClass('yellow-highlight red-highlight brilliant-highlight error-flash');
-            $('#board .square-55d63').find('.highlight-dot, .highlight-capture').remove();
+            $('#board .square-55d63').find('.highlight-dot, .highlight-capture, .evaluation-icon').remove();
         }
 
         function highlightKingInCheck() {
@@ -333,6 +356,7 @@
             wCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             bCaptured.sort((a, b) => pieceOrder[a] - pieceOrder[b]);
             
+            // استخدام صور القطع من Chessboard.js
             let wHtml = wCaptured.map(p => `<img src="https://chessboardjs.com/img/chesspieces/wikipedia/b${p}.png">`).join('');
             let bHtml = bCaptured.map(p => `<img src="https://chessboardjs.com/img/chesspieces/wikipedia/w${p}.png">`).join('');
             
@@ -351,10 +375,18 @@
             
             board.position(game.fen(), false);
             
+            removeHighlights(); // إزالة التحديدات السابقة
+
             // إضافة تأثير النقلة القوية عند الكش
-            if (game.in_check()) {
+            let isCheck = game.in_check();
+            if (isCheck) {
                 checkSound.play();
-                $('#board .square-' + target).addClass('brilliant-highlight');
+                let $targetSquare = $('#board .square-' + target);
+                $targetSquare.addClass('brilliant-highlight');
+                // إضافة أيقونة التقييم
+                if ($targetSquare.find('.evaluation-icon').length === 0) {
+                     $targetSquare.append('<div class="evaluation-icon">!</div>');
+                }
             } else if (move.captured) {
                 captureSound.play();
             } else {
@@ -372,7 +404,7 @@
                 wPhoto: dataCache.wPhoto || '', bPhoto: dataCache.bPhoto || '',
                 timeLimit: timeLimitGame,
                 resigned: dataCache.resigned || null,
-                lastMoveTo: game.in_check() ? target : null // لحفظ تأثير النقلة القوية للخصم
+                lastMoveTo: isCheck ? target : null // حفظ المربع لإظهار التأثير للخصم
             });
             return true;
         }
@@ -458,7 +490,12 @@
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                        $sq.append(`<div class="${isCapture ? 'highlight-capture' : 'highlight-dot'}"></div>`);
+                        // الدائرة الحمراء للقطع الممكن أكلها
+                        if (isCapture) {
+                            $sq.append('<div class="highlight-capture"></div>');
+                        } else {
+                            $sq.append('<div class="highlight-dot"></div>');
+                        }
                     }
                 },
                 onDrop: function(source, target) {
@@ -501,7 +538,12 @@
                     for (var i = 0; i < moves.length; i++) {
                         var isCapture = game.get(moves[i].to) !== null;
                         var $sq = $('#board .square-' + moves[i].to);
-                        $sq.append(`<div class="${isCapture ? 'highlight-capture' : 'highlight-dot'}"></div>`);
+                         // الدائرة الحمراء للقطع الممكن أكلها
+                        if (isCapture) {
+                            $sq.append('<div class="highlight-capture"></div>');
+                        } else {
+                            $sq.append('<div class="highlight-dot"></div>');
+                        }
                     }
                 } else {
                     removeHighlights();
@@ -539,7 +581,14 @@
                         else moveSound.play();
                         
                         removeHighlights();
-                        if (data.lastMoveTo) $('#board .square-' + data.lastMoveTo).addClass('brilliant-highlight');
+                        // إظهار تأثير النقلة القوية إذا حدثت
+                        if (data.lastMoveTo) {
+                            let $lastSquare = $('#board .square-' + data.lastMoveTo);
+                            $lastSquare.addClass('brilliant-highlight');
+                            if ($lastSquare.find('.evaluation-icon').length === 0) {
+                                $lastSquare.append('<div class="evaluation-icon">!</div>');
+                            }
+                        }
                         highlightKingInCheck();
                         updateCapturedPieces();
                         checkGameStatus();
