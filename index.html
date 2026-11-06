@@ -168,6 +168,7 @@
             var config = {
                 position: 'start',
                 draggable: true,
+                pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/](https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
                 orientation: myRole === 'b' ? 'black' : 'white',
                 onDragStart: function(source, piece) {
                     if (game.game_over() || game.turn() !== myRole) return false;
